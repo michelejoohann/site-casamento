@@ -54,6 +54,7 @@ const translations = {
     searchSuccess: "Olá, {name}! Convite localizado. Você pode confirmar sua presença e de até {limit} acompanhante(s).",
     searchSuccessIndividual: "Olá, {name}! Convite localizado. Confirmar convite individual.",
     searchError: "Desculpe, não encontramos seu nome na lista de convidados. Por favor, digite o nome completo ou contate os noivos.",
+    searchTooShort: "Por favor, digite pelo menos 3 letras para realizar a busca.",
     companionLabel: "Nome do Acompanhante {num}",
     companionPlaceholder: "Nome completo do acompanhante",
     companionsOptions: {
@@ -79,6 +80,7 @@ const translations = {
     searchSuccess: "Hello, {name}! Invitation found. You can confirm attendance for yourself and up to {limit} companion(s).",
     searchSuccessIndividual: "Hello, {name}! Invitation found. Confirming individual invitation.",
     searchError: "Sorry, we could not find your name on the guest list. Please check the spelling or contact the couple.",
+    searchTooShort: "Please type at least 3 letters to search.",
     companionLabel: "Companion {num} Name",
     companionPlaceholder: "Companion's full name",
     companionsOptions: {
@@ -283,10 +285,19 @@ function searchInvitation() {
   if (!typedName) return;
 
   const normalizedTyped = normalizeText(typedName);
+
+  // Impede buscas curtas demais para evitar falsos positivos
+  if (normalizedTyped.length < 3) {
+    validationMsg.innerHTML = `<span style="color: #f87171;">${translations[currentLanguage].searchTooShort}</span>`;
+    rsvpFields.style.display = "none";
+    return;
+  }
+
   let matchedName = "";
   let matchedLimit = 0;
   let found = false;
 
+  // 1. Tenta correspondência exata primeiro
   for (let guest in GUEST_LIST) {
     if (normalizeText(guest) === normalizedTyped) {
       matchedName = guest;
@@ -296,11 +307,23 @@ function searchInvitation() {
     }
   }
 
+  // 2. Se não encontrou exato, tenta correspondência parcial (se o nome na lista contiver o termo digitado)
+  if (!found) {
+    for (let guest in GUEST_LIST) {
+      if (normalizeText(guest).includes(normalizedTyped)) {
+        matchedName = guest;
+        matchedLimit = GUEST_LIST[guest];
+        found = true;
+        break;
+      }
+    }
+  }
+
   if (found) {
     validatedGuestName = matchedName;
     validatedLimit = matchedLimit;
 
-    // Atualiza campo de texto com a grafia correta
+    // Atualiza o campo com o nome completo oficial
     inputName.value = matchedName;
     inputName.readOnly = true;
     btnSearchInvite.style.display = "none";
