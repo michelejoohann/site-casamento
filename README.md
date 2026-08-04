@@ -85,13 +85,11 @@ function doPost(e) {
     }
     
     return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
@@ -101,8 +99,7 @@ function doGet(e) {
     var nameToFind = e.parameter.name;
     if (!nameToFind) {
       return ContentService.createTextOutput(JSON.stringify({ "found": false }))
-        .setMimeType(ContentService.MimeType.JSON)
-        .setHeader('Access-Control-Allow-Origin', '*');
+        .setMimeType(ContentService.MimeType.JSON);
     }
     
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -125,13 +122,11 @@ function doGet(e) {
     }
     
     return ContentService.createTextOutput(JSON.stringify({ "found": found }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ "found": false, "error": error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 ```
