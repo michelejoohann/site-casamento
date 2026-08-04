@@ -39,9 +39,8 @@ const inputName = document.getElementById("name");
 const btnSearchInvite = document.getElementById("btn-search-invite");
 const validationMsg = document.getElementById("validation-msg");
 const rsvpFields = document.getElementById("rsvp-fields");
-const companionsSelect = document.getElementById("companions");
-const companionNamesContainer = document.getElementById("companion-names-container");
-const companionsGroup = document.getElementById("companions-group");
+const guestSlotsGroup = document.getElementById("guest-slots-group");
+const guestSlotsContainer = document.getElementById("guest-slots-container");
 const btnSubmitRsvp = document.getElementById("btn-submit-rsvp");
 const radioAttendance = document.getElementsByName("attendance");
 
@@ -138,27 +137,26 @@ function setLanguage(lang) {
     btnSubmit.querySelector("span.lang-en").textContent = translations.en.submitBtn;
   }
   
-  // Atualiza as opções do dropdown de acompanhantes no idioma correto se o convite já foi buscado
-  if (validatedGuestName) {
-    const currentSelectedVal = companionsSelect.value;
-    const currentCompanionNames = Array.from(document.querySelectorAll(".companion-name-input")).map(inp => inp.value);
-    buildCompanionsDropdown(validatedLimit);
-    companionsSelect.value = currentSelectedVal;
+  // Atualiza as traduções dos slots se estiverem desenhados
+  document.querySelectorAll(".guest-slot-row").forEach((slot) => {
+    const select = slot.querySelector(".guest-slot-select");
+    const textInput = slot.querySelector(".guest-slot-name-input");
     
-    // Recria os inputs e recoloca os valores
-    companionsSelect.dispatchEvent(new Event("change"));
-    document.querySelectorAll(".companion-name-input").forEach((inp, idx) => {
-      if (currentCompanionNames[idx]) inp.value = currentCompanionNames[idx];
-    });
-  }
-  
-  // Atualiza os placeholders dos inputs de acompanhantes se estiverem visíveis
-  document.querySelectorAll(".companion-name-input").forEach((input, index) => {
-    input.placeholder = translations[lang].companionPlaceholder;
-    const label = input.previousElementSibling;
-    if (label) {
-      label.querySelector("span.lang-pt").textContent = translations.pt.companionLabel.replace("{num}", index + 1);
-      label.querySelector("span.lang-en").textContent = translations.en.companionLabel.replace("{num}", index + 1);
+    if (select) {
+      // Opção 0 (Default / Desabilitada)
+      select.options[0].textContent = lang === "en" ? "-- Select option --" : "-- Selecione uma opção --";
+      
+      // Opção Acompanhante (penúltima)
+      const optCompIndex = select.options.length - 2;
+      select.options[optCompIndex].textContent = lang === "en" ? "Companion (Other name)" : "Acompanhante (Outro nome)";
+      
+      // Opção Ausente (última)
+      const optAbsentIndex = select.options.length - 1;
+      select.options[optAbsentIndex].textContent = lang === "en" ? "Will not attend" : "Não irá comparecer";
+    }
+    
+    if (textInput) {
+      textInput.placeholder = lang === "en" ? "Type companion full name" : "Digite o nome completo do acompanhante";
     }
   });
 }
@@ -340,12 +338,13 @@ function searchInvitation() {
     // Checa se já foi confirmado anteriormente
     checkPreviousConfirmation(matchedName);
 
-    // Configura o seletor de acompanhantes
-    buildCompanionsDropdown(matchedLimit);
+    // Configura os slots de confirmação individuais dos membros
+    const guestNames = parseGuestNames(matchedName);
+    buildGuestSlots(guestNames, matchedLimit);
 
     // Abre o formulário
     rsvpFields.style.display = "block";
-    companionsGroup.style.display = matchedLimit > 0 ? "block" : "none";
+    guestSlotsGroup.style.display = matchedLimit > 0 ? "block" : "none";
   } else {
     // Mensagem de erro
     validationMsg.innerHTML = `<span style="color: #f87171;">${translations[currentLanguage].searchError}</span>`;
@@ -398,50 +397,128 @@ function showAlreadyConfirmedWarning() {
   validationMsg.appendChild(warningEl);
 }
 
-// Preenche dinamicamente as opções de acompanhante
-function buildCompanionsDropdown(limit) {
-  companionsSelect.innerHTML = "";
-  companionNamesContainer.innerHTML = ""; // Limpa inputs de nomes
-
-  // Opção: Apenas eu
-  const opt0 = document.createElement("option");
-  opt0.value = "0";
-  opt0.textContent = translations[currentLanguage].companionsOptions.justMe;
-  companionsSelect.appendChild(opt0);
-
-  // Adiciona opções até o limite máximo do convite
-  for (let i = 1; i <= limit; i++) {
-    const opt = document.createElement("option");
-    opt.value = i;
-    if (i === 1) {
-      opt.textContent = translations[currentLanguage].companionsOptions.one;
-    } else {
-      opt.textContent = translations[currentLanguage].companionsOptions.multiple.replace("{num}", i);
+// Extrai os nomes individuais de um convite composto (ex: "Dani, Jardel, Livia, Alice e acompanhantes")
+function parseGuestNames(invitationName) {
+  let cleanName = invitationName.replace(/\s+(e|and|&)\s+/ig, ", ");
+  let parts = cleanName.split(",");
+  
+  let names = [];
+  const wordsToIgnore = ["acompanhante", "acompanhantes", "familia", "convidado", "convidados", "filhos", "filho", "filha", "filhas"];
+  
+  parts.forEach(p => {
+    let trimmed = p.trim();
+    if (!trimmed) return;
+    
+    const lower = trimmed.toLowerCase();
+    let shouldIgnore = false;
+    for (let word of wordsToIgnore) {
+      if (lower === word || lower.startsWith(word)) {
+        shouldIgnore = true;
+        break;
+      }
     }
-    companionsSelect.appendChild(opt);
-  }
+    
+    if (!shouldIgnore && trimmed.length > 1) {
+      names.push(trimmed);
+    }
+  });
+  
+  return names;
 }
 
-// Cria inputs de texto para os acompanhantes
-companionsSelect.addEventListener("change", () => {
-  const count = parseInt(companionsSelect.value, 10);
-  companionNamesContainer.innerHTML = "";
-
-  for (let i = 1; i <= count; i++) {
-    const group = document.createElement("div");
-    group.className = "form-group";
-    group.style.marginBottom = "1rem";
-    group.style.animation = "fadeInUp 0.3s ease";
-    group.innerHTML = `
-      <label style="font-size: 0.9rem; color: var(--gold-light); margin-bottom: 0.4rem; display: block;">
-        <span class="lang-pt">${translations.pt.companionLabel.replace("{num}", i)}</span>
-        <span class="lang-en">${translations.en.companionLabel.replace("{num}", i)}</span>
-      </label>
-      <input type="text" class="form-control companion-name-input" required placeholder="${translations[currentLanguage].companionPlaceholder}">
+// Constrói dinamicamente os slots de seleção para cada convidado da lista
+function buildGuestSlots(names, limit) {
+  guestSlotsContainer.innerHTML = "";
+  
+  // Vagas totais = 1 principal + limite de acompanhantes
+  const totalSpots = 1 + limit;
+  
+  for (let i = 0; i < totalSpots; i++) {
+    const slotRow = document.createElement("div");
+    slotRow.className = "guest-slot-row";
+    
+    const labelTextPt = `Convidado ${i + 1}`;
+    const labelTextEn = `Guest ${i + 1}`;
+    
+    const header = document.createElement("div");
+    header.className = "guest-slot-header";
+    header.innerHTML = `
+      <span class="guest-slot-label">
+        <span class="lang-pt">${labelTextPt}</span>
+        <span class="lang-en">${labelTextEn}</span>
+      </span>
     `;
-    companionNamesContainer.appendChild(group);
+    slotRow.appendChild(header);
+    
+    const inputsDiv = document.createElement("div");
+    inputsDiv.className = "guest-slot-inputs";
+    
+    const select = document.createElement("select");
+    select.className = "form-control guest-slot-select";
+    select.required = true;
+    
+    // Opção default
+    const optDefault = document.createElement("option");
+    optDefault.value = "";
+    optDefault.disabled = true;
+    optDefault.textContent = currentLanguage === "en" ? "-- Select option --" : "-- Selecione uma opção --";
+    select.appendChild(optDefault);
+    
+    // Nomes identificados no convite
+    names.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+    
+    // Opção Acompanhante avulso
+    const optCompanion = document.createElement("option");
+    optCompanion.value = "Acompanhante";
+    optCompanion.textContent = currentLanguage === "en" ? "Companion (Other name)" : "Acompanhante (Outro nome)";
+    select.appendChild(optCompanion);
+    
+    // Opção Ausente
+    const optAbsent = document.createElement("option");
+    optAbsent.value = "Ausente";
+    optAbsent.textContent = currentLanguage === "en" ? "Will not attend" : "Não irá comparecer";
+    select.appendChild(optAbsent);
+    
+    inputsDiv.appendChild(select);
+    
+    // Input de texto para o nome do acompanhante caso selecionado
+    const textInput = document.createElement("input");
+    textInput.type = "text";
+    textInput.className = "form-control guest-slot-name-input";
+    textInput.style.display = "none";
+    textInput.placeholder = currentLanguage === "en" ? "Type companion full name" : "Digite o nome completo do acompanhante";
+    inputsDiv.appendChild(textInput);
+    
+    slotRow.appendChild(inputsDiv);
+    guestSlotsContainer.appendChild(slotRow);
+    
+    // Pré-seleção inteligente
+    if (i < names.length) {
+      select.value = names[i];
+    } else {
+      select.value = "Ausente";
+    }
+    
+    // Lógica para exibir input de texto ao selecionar Acompanhante
+    select.addEventListener("change", () => {
+      if (select.value === "Acompanhante") {
+        textInput.style.display = "block";
+        textInput.required = true;
+      } else {
+        textInput.style.display = "none";
+        textInput.required = false;
+        textInput.value = "";
+      }
+    });
+    
+    select.dispatchEvent(new Event("change"));
   }
-});
+}
 
 // Triggers para a busca
 btnSearchInvite.addEventListener("click", searchInvitation);
@@ -461,20 +538,19 @@ inputName.addEventListener("dblclick", () => {
     validationMsg.innerHTML = "";
     validatedGuestName = "";
     validatedLimit = 0;
+    guestSlotsContainer.innerHTML = "";
+    guestSlotsGroup.style.display = "none";
   }
 });
 
-// Esconder acompanhantes caso a resposta seja 'Ausente'
+// Esconder slots caso a resposta seja 'Ausente'
 radioAttendance.forEach(radio => {
   radio.addEventListener("change", (e) => {
     if (e.target.value === "Ausente") {
-      companionsGroup.style.display = "none";
-      companionNamesContainer.innerHTML = "";
+      guestSlotsGroup.style.display = "none";
     } else {
       if (validatedLimit > 0) {
-        companionsGroup.style.display = "block";
-        // Recria os inputs de acordo com a seleção atual
-        companionsSelect.dispatchEvent(new Event("change"));
+        guestSlotsGroup.style.display = "block";
       }
     }
   });
@@ -487,15 +563,38 @@ rsvpForm.addEventListener("submit", (e) => {
   const name = validatedGuestName || inputName.value.trim();
   const email = document.getElementById("email").value.trim();
   const whatsapp = document.getElementById("whatsapp").value.trim();
-  const attendance = document.querySelector('input[name="attendance"]:checked').value;
-  const companionsCount = attendance === "Ausente" ? 0 : parseInt(companionsSelect.value, 10);
+  let attendance = document.querySelector('input[name="attendance"]:checked').value;
   
-  // Coleta os nomes digitados nos inputs de acompanhantes
-  const companionInputs = document.querySelectorAll(".companion-name-input");
-  const companionNames = Array.from(companionInputs)
-    .map(inp => inp.value.trim())
-    .filter(Boolean)
-    .join(", ");
+  let companionsCount = 0;
+  let companionNames = "";
+  
+  if (attendance === "Confirmado" && validatedLimit > 0) {
+    const slotRows = document.querySelectorAll(".guest-slot-row");
+    const confirmedNames = [];
+    
+    slotRows.forEach(slot => {
+      const select = slot.querySelector(".guest-slot-select");
+      const textInput = slot.querySelector(".guest-slot-name-input");
+      const selectVal = select.value;
+      
+      if (selectVal && selectVal !== "Ausente") {
+        if (selectVal === "Acompanhante") {
+          const typedName = textInput.value.trim();
+          if (typedName) confirmedNames.push(typedName);
+        } else {
+          confirmedNames.push(selectVal);
+        }
+      }
+    });
+    
+    if (confirmedNames.length > 0) {
+      companionsCount = confirmedNames.length - 1;
+      companionNames = confirmedNames.slice(1).join(", ");
+    } else {
+      // Se todos os slots do convite familiar forem ausentes, a presença geral é Ausente
+      attendance = "Ausente";
+    }
+  }
 
   const rsvpData = {
     name,
@@ -566,7 +665,8 @@ function resetRsvpForm() {
   validationMsg.innerHTML = "";
   validatedGuestName = "";
   validatedLimit = 0;
-  companionNamesContainer.innerHTML = "";
+  guestSlotsContainer.innerHTML = "";
+  guestSlotsGroup.style.display = "none";
 }
 
 // Auto-busca via parâmetro na URL (?g=Brixius ou ?convidado=Brixius)

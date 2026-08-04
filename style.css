@@ -1161,3 +1161,44 @@ body.lang-pt .lang-en {
   margin-bottom: 1rem;
 }
 
+/* Slots de Convidados RSVP */
+.guest-slot-row {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.guest-slot-header {
+  margin-bottom: 0.8rem;
+  text-align: left;
+}
+
+.guest-slot-label {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--gold-light);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.guest-slot-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+@media (min-width: 600px) {
+  .guest-slot-inputs {
+    flex-direction: row;
+  }
+  .guest-slot-select {
+    flex: 1;
+  }
+  .guest-slot-name-input {
+    flex: 1.2;
+  }
+}
+
