@@ -1,7 +1,7 @@
 // CONFIGURAÇÕES DO CASAMENTO
 // 1. Cole aqui a URL gerada pelo Google Apps Script (ex: https://script.google.com/macros/s/AKfycb.../exec)
 // Se deixar como está, o site usará o painel administrativo local (localStorage) como teste.
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycby5dkuaZIYN9XMYR8PvZDPa68TD3g_OOLVMaRfd826DWDP64JFb75yCJocbVNVfeH0i/execSUA_URL_DO_GOOGLE_SCRIPT_AQUI";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycby5dkuaZIYN9XMYR8PvZDPa68TD3g_OOLVMaRfd826DWDP64JFb75yCJocbVNVfeH0i/exec";
 
 const CASAMENTO_DATE = new Date("2027-09-21T19:00:00").getTime(); // 21 de Setembro de 2027, 19:00h
 const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
