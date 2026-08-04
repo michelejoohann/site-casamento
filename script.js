@@ -33,6 +33,21 @@ const labelHours = document.getElementById("label-hours");
 const labelMinutes = document.getElementById("label-minutes");
 const labelSeconds = document.getElementById("label-seconds");
 
+// Elementos do RSVP e Estado Global
+const rsvpForm = document.getElementById("rsvp-form");
+const inputName = document.getElementById("name");
+const btnSearchInvite = document.getElementById("btn-search-invite");
+const validationMsg = document.getElementById("validation-msg");
+const rsvpFields = document.getElementById("rsvp-fields");
+const companionsSelect = document.getElementById("companions");
+const companionNamesContainer = document.getElementById("companion-names-container");
+const companionsGroup = document.getElementById("companions-group");
+const btnSubmitRsvp = document.getElementById("btn-submit-rsvp");
+const radioAttendance = document.getElementsByName("attendance");
+
+let validatedGuestName = "";
+let validatedLimit = 0;
+
 // =========================================
 // 1. SELETOR DE IDIOMAS (BILINGUE)
 // =========================================
@@ -257,19 +272,6 @@ btnCopyPix.addEventListener("click", () => {
 // =========================================
 // 4. FLUXO RSVP (BUSCA DE CONVITE E CONFIRMAÇÃO)
 // =========================================
-const rsvpForm = document.getElementById("rsvp-form");
-const inputName = document.getElementById("name");
-const btnSearchInvite = document.getElementById("btn-search-invite");
-const validationMsg = document.getElementById("validation-msg");
-const rsvpFields = document.getElementById("rsvp-fields");
-const companionsSelect = document.getElementById("companions");
-const companionNamesContainer = document.getElementById("companion-names-container");
-const companionsGroup = document.getElementById("companions-group");
-const btnSubmitRsvp = document.getElementById("btn-submit-rsvp");
-const radioAttendance = document.getElementsByName("attendance");
-
-let validatedGuestName = "";
-let validatedLimit = 0;
 
 // Remove acentos e padroniza string para buscas seguras
 function normalizeText(text) {
