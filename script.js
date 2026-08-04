@@ -12,15 +12,92 @@ const elHours = document.getElementById("hours");
 const elMinutes = document.getElementById("minutes");
 const elSeconds = document.getElementById("seconds");
 
+const labelDays = document.getElementById("label-days");
+const labelHours = document.getElementById("label-hours");
+const labelMinutes = document.getElementById("label-minutes");
+const labelSeconds = document.getElementById("label-seconds");
+
 // =========================================
-// 1. CONTADOR REGRESSIVO
+// 1. SELETOR DE IDIOMAS (BILINGUE)
+// =========================================
+const translations = {
+  pt: {
+    days: "Dias", hours: "Horas", minutes: "Minutos", seconds: "Segundos",
+    placeholderName: "Ex: Elrond de Valfenda",
+    placeholderEmail: "Ex: elrond@valfenda.com",
+    placeholderWhatsapp: "Ex: (11) 99999-9999",
+    placeholderMsg: "Escreva aqui se tiver alguma alergia alimentar ou um recado elfo...",
+    submitBtn: "Enviar Confirmação",
+    submitBtnSending: "Enviando...",
+    successConfirmed: "Obrigado pela confirmação, {name}! Nos vemos no dia 21 de Setembro de 2027! 🌿✨",
+    successAbsent: "Sentiremos sua falta, {name}! Agradecemos por nos avisar. 🤍",
+    errorSubmit: "Houve um erro ao enviar sua confirmação. Por favor, tente novamente.",
+    copiar: "Copiar",
+    copiado: "Copiado!",
+    adminTitle: "Presente Selecionado"
+  },
+  en: {
+    days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds",
+    placeholderName: "e.g., Elrond of Rivendell",
+    placeholderEmail: "e.g., elrond@rivendell.com",
+    placeholderWhatsapp: "e.g., +1 (123) 456-7890",
+    placeholderMsg: "Write here if you have any food allergies or a warm message...",
+    submitBtn: "Send RSVP",
+    submitBtnSending: "Sending...",
+    successConfirmed: "Thank you for confirming, {name}! See you on September 21, 2027! 🌿✨",
+    successAbsent: "We will miss you, {name}! Thank you for letting us know. 🤍",
+    errorSubmit: "There was an error sending your confirmation. Please try again.",
+    copiar: "Copy",
+    copiado: "Copied!",
+    adminTitle: "Selected Gift"
+  }
+};
+
+let currentLanguage = localStorage.getItem("wedding_lang") || "pt";
+
+function setLanguage(lang) {
+  currentLanguage = lang;
+  localStorage.setItem("wedding_lang", lang);
+
+  // Classe no body para controle CSS
+  document.body.className = "lang-" + lang;
+
+  // Botões de idioma ativos
+  document.getElementById("btn-lang-pt").classList.toggle("active", lang === "pt");
+  document.getElementById("btn-lang-en").classList.toggle("active", lang === "en");
+
+  // Rótulos do cronômetro
+  labelDays.textContent = translations[lang].days;
+  labelHours.textContent = translations[lang].hours;
+  labelMinutes.textContent = translations[lang].minutes;
+  labelSeconds.textContent = translations[lang].seconds;
+
+  // Placeholders do formulário
+  document.getElementById("name").placeholder = translations[lang].placeholderName;
+  document.getElementById("email").placeholder = translations[lang].placeholderEmail;
+  document.getElementById("whatsapp").placeholder = translations[lang].placeholderWhatsapp;
+  document.getElementById("message").placeholder = translations[lang].placeholderMsg;
+
+  // Botão de envio
+  const btnSubmit = document.getElementById("btn-submit-rsvp");
+  if (btnSubmit) {
+    btnSubmit.querySelector("span.lang-pt").textContent = translations.pt.submitBtn;
+    btnSubmit.querySelector("span.lang-en").textContent = translations.en.submitBtn;
+  }
+}
+
+// Inicializa o idioma
+setLanguage(currentLanguage);
+
+// =========================================
+// 2. CONTADOR REGRESSIVO
 // =========================================
 function updateCountdown() {
   const now = new Date().getTime();
   const diff = CASAMENTO_DATE - now;
 
   if (diff <= 0) {
-    document.getElementById("countdown").innerHTML = "<div class='countdown-box' style='width:100%;'><span class='countdown-number'>Chegou o Grande Dia!</span></div>";
+    document.getElementById("countdown").innerHTML = `<div class='countdown-box' style='width:100%;'><span class='countdown-number'>${currentLanguage === 'pt' ? 'Chegou o Grande Dia!' : 'The Big Day Has Arrived!'}</span></div>`;
     clearInterval(countdownInterval);
     return;
   }
@@ -40,7 +117,7 @@ updateCountdown();
 const countdownInterval = setInterval(updateCountdown, 1000);
 
 // =========================================
-// 2. MODAL DE PRESENTES (COTAS PIX)
+// 3. MODAL DE PRESENTES E ABAS BILINGUES
 // =========================================
 const giftModal = document.getElementById("gift-modal");
 const closeGiftModal = document.getElementById("close-gift-modal");
@@ -49,15 +126,49 @@ const modalGiftPrice = document.getElementById("modal-gift-price");
 const btnCopyPix = document.getElementById("btn-copy-pix");
 const pixKeyVal = document.getElementById("pix-key-val");
 
+const tabPixBtn = document.getElementById("tab-pix-btn");
+const tabIntlBtn = document.getElementById("tab-intl-btn");
+const tabPixContent = document.getElementById("tab-pix-content");
+const tabIntlContent = document.getElementById("tab-intl-content");
+
+// Lógica de Abas do Modal
+function selectModalTab(tab) {
+  if (tab === "pix") {
+    tabPixBtn.classList.add("active");
+    tabIntlBtn.classList.remove("active");
+    tabPixContent.classList.add("active");
+    tabIntlContent.classList.remove("active");
+  } else {
+    tabPixBtn.classList.remove("active");
+    tabIntlBtn.classList.add("active");
+    tabPixContent.classList.remove("active");
+    tabIntlContent.classList.add("active");
+  }
+}
+
+tabPixBtn.addEventListener("click", () => selectModalTab("pix"));
+tabIntlBtn.addEventListener("click", () => selectModalTab("international"));
+
 // Abrir modal de presente
 document.querySelectorAll(".btn-gift").forEach(button => {
   button.addEventListener("click", () => {
-    const giftTitle = button.getAttribute("data-title");
+    // Escolhe o título baseado no idioma ativo
+    const giftTitle = currentLanguage === "en" 
+      ? button.getAttribute("data-title-en") 
+      : button.getAttribute("data-title-pt");
     const giftPrice = button.getAttribute("data-price");
 
     modalGiftTitle.textContent = giftTitle;
-    modalGiftPrice.textContent = giftPrice === "Livre" ? "Valor Livre" : `R$ ${giftPrice}`;
+    
+    if (giftPrice === "Livre") {
+      modalGiftPrice.textContent = currentLanguage === "en" ? "Free Amount" : "Valor Livre";
+    } else {
+      modalGiftPrice.textContent = `R$ ${giftPrice}`;
+    }
 
+    // Reseta para a primeira aba (PIX) ao abrir
+    selectModalTab("pix");
+    btnCopyPix.textContent = translations[currentLanguage].copiar;
     giftModal.classList.add("active");
   });
 });
@@ -65,17 +176,16 @@ document.querySelectorAll(".btn-gift").forEach(button => {
 // Fechar modal de presente
 closeGiftModal.addEventListener("click", () => {
   giftModal.classList.remove("active");
-  btnCopyPix.textContent = "Copiar";
 });
 
 // Copiar chave PIX
 btnCopyPix.addEventListener("click", () => {
   navigator.clipboard.writeText(pixKeyVal.textContent).then(() => {
-    btnCopyPix.textContent = "Copiado!";
+    btnCopyPix.textContent = translations[currentLanguage].copiado;
     btnCopyPix.style.backgroundColor = "var(--gold)";
     btnCopyPix.style.color = "var(--bg-dark)";
     setTimeout(() => {
-      btnCopyPix.textContent = "Copiar";
+      btnCopyPix.textContent = translations[currentLanguage].copiar;
       btnCopyPix.style.backgroundColor = "transparent";
       btnCopyPix.style.color = "var(--gold)";
     }, 2000);
@@ -85,10 +195,10 @@ btnCopyPix.addEventListener("click", () => {
 });
 
 // =========================================
-// 3. FLUXO RSVP (CONFIRMAÇÃO DE PRESENÇA)
+// 4. FLUXO RSVP (CONFIRMAÇÃO DE PRESENÇA)
 // =========================================
 const rsvpForm = document.getElementById("rsvp-form");
-const btnSubmit = rsvpForm.querySelector(".btn-submit");
+const btnSubmitRsvp = document.getElementById("btn-submit-rsvp");
 const radioAttendance = document.getElementsByName("attendance");
 const companionsGroup = document.getElementById("companions-group");
 
@@ -126,8 +236,8 @@ rsvpForm.addEventListener("submit", (e) => {
 
   // Se o Google Sheets estiver configurado
   if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Enviando...";
+    btnSubmitRsvp.disabled = true;
+    btnSubmitRsvp.querySelector(`span.lang-${currentLanguage}`).textContent = translations[currentLanguage].submitBtnSending;
 
     fetch(GOOGLE_SHEET_URL, {
       method: "POST",
@@ -137,24 +247,22 @@ rsvpForm.addEventListener("submit", (e) => {
       },
       body: JSON.stringify(rsvpData)
     })
-      .then(() => {
-        // Como usamos 'no-cors' para evitar problemas de CORS do Google Script,
-        // a resposta retorna opaca, mas a gravação é concluída com sucesso.
-        showRsvpSuccess(name, attendance);
-        rsvpForm.reset();
-        companionsGroup.style.display = "block";
-      })
-      .catch(err => {
-        console.error("Erro ao enviar para planilha: ", err);
-        alert("Houve um erro ao enviar sua confirmação. Por favor, tente novamente.");
-      })
-      .finally(() => {
-        btnSubmit.disabled = false;
-        btnSubmit.textContent = "Enviar Confirmação";
-      });
+    .then(() => {
+      showRsvpSuccess(name, attendance);
+      rsvpForm.reset();
+      companionsGroup.style.display = "block";
+    })
+    .catch(err => {
+      console.error("Erro ao enviar: ", err);
+      alert(translations[currentLanguage].errorSubmit);
+    })
+    .finally(() => {
+      btnSubmitRsvp.disabled = false;
+      btnSubmitRsvp.querySelector(`span.lang-${currentLanguage}`).textContent = translations[currentLanguage].submitBtn;
+    });
 
   } else {
-    // Caso de teste/fallback: Salvar localmente no localStorage
+    // Caso de teste/fallback local
     let currentRSVPs = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
     rsvpData.id = Date.now();
     currentRSVPs.push(rsvpData);
@@ -167,15 +275,15 @@ rsvpForm.addEventListener("submit", (e) => {
 });
 
 function showRsvpSuccess(name, attendance) {
-  if (attendance === "Confirmado") {
-    alert(`Obrigado pela confirmação, ${name}! Nos vemos no dia 21 de Setembro de 2027! 🌿✨`);
-  } else {
-    alert(`Sentiremos sua falta, ${name}! Agradecemos por nos avisar. 🤍`);
-  }
+  const template = attendance === "Confirmado" 
+    ? translations[currentLanguage].successConfirmed 
+    : translations[currentLanguage].successAbsent;
+  
+  alert(template.replace("{name}", name));
 }
 
 // =========================================
-// 4. PAINEL ADMINISTRATIVO LOCAL (TESTES)
+// 5. PAINEL ADMINISTRATIVO LOCAL (TESTES)
 // =========================================
 const adminBtn = document.getElementById("admin-btn");
 const adminModal = document.getElementById("admin-modal");
@@ -199,7 +307,7 @@ if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
 adminBtn.addEventListener("click", () => {
   adminModal.classList.add("active");
   adminPassInput.value = "";
-
+  
   if (isAdminAuthenticated) {
     adminAuthSection.style.display = "none";
     adminDataSection.style.display = "block";
@@ -229,7 +337,7 @@ function performAdminLogin() {
     adminDataSection.style.display = "block";
     renderGuestList();
   } else {
-    alert("Senha incorreta! Que as águias levem você embora.");
+    alert(currentLanguage === 'en' ? "Incorrect password!" : "Senha incorreta!");
     adminPassInput.value = "";
   }
 }
@@ -240,7 +348,7 @@ function renderGuestList() {
   guestListRows.innerHTML = "";
 
   if (rsvps.length === 0) {
-    guestListRows.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--silver);">Nenhuma confirmação recebida ainda no modo de testes.</td></tr>`;
+    guestListRows.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--silver);">${currentLanguage === 'en' ? 'No confirmations received yet.' : 'Nenhuma confirmação recebida ainda.'}</td></tr>`;
     return;
   }
 
@@ -302,7 +410,7 @@ btnExportCsv.addEventListener("click", () => {
 
 // Limpar lista RSVP
 btnClearRsvp.addEventListener("click", () => {
-  if (confirm("Deseja mesmo limpar as confirmações de testes locais?")) {
+  if (confirm(currentLanguage === 'en' ? "Are you sure you want to clear test RSVPs?" : "Deseja mesmo limpar as confirmações de testes locais?")) {
     localStorage.removeItem("wedding_rsvps");
     renderGuestList();
   }
@@ -312,42 +420,8 @@ btnClearRsvp.addEventListener("click", () => {
 window.addEventListener("click", (e) => {
   if (e.target === giftModal) {
     giftModal.classList.remove("active");
-    btnCopyPix.textContent = "Copiar";
   }
   if (e.target === adminModal) {
     adminModal.classList.remove("active");
   }
 });
-
-/*
-=================================================================================
-CÓDIGO DO GOOGLE APPS SCRIPT (CRIE UMA PLANILHA NO GOOGLE DRIVE E COLE ESSE CÓDIGO)
-=================================================================================
-
-function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
-    
-    // Insere os dados na planilha como uma nova linha
-    sheet.appendRow([
-      data.name,
-      data.email,
-      data.whatsapp,
-      data.attendance,
-      data.companions,
-      data.message,
-      data.date || new Date().toLocaleString("pt-BR")
-    ]);
-    
-    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
-      
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeader('Access-Control-Allow-Origin', '*');
-  }
-}
-*/

@@ -955,3 +955,174 @@ footer {
     gap: 1rem;
   }
 }
+
+/* =========================================
+   5. SELETOR DE IDIOMAS (BILINGUE)
+   ========================================= */
+.lang-switcher {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  background: rgba(7, 19, 14, 0.9);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: var(--transition-smooth);
+}
+
+.lang-switcher:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px var(--gold-glow);
+}
+
+.btn-lang {
+  background: transparent;
+  border: none;
+  color: var(--silver);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 0 0.2rem;
+  transition: var(--transition-smooth);
+}
+
+.btn-lang.active {
+  color: var(--gold);
+  text-shadow: 0 0 5px var(--gold-glow);
+}
+
+.btn-lang:hover {
+  color: var(--gold-light);
+}
+
+.lang-divider {
+  color: rgba(212, 175, 55, 0.3);
+}
+
+/* Regras de Exibição de Idiomas */
+body.lang-en .lang-pt {
+  display: none !important;
+}
+
+body.lang-pt .lang-en {
+  display: none !important;
+}
+
+/* Ajustes responsivos para o seletor em telas pequenas */
+@media (max-width: 600px) {
+  .lang-switcher {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* =========================================
+   6. ABAS DO MODAL (PIX / INTERNACIONAL)
+   ========================================= */
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-gold);
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+}
+
+.modal-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--silver);
+  padding: 0.8rem 0.5rem;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.modal-tab-btn:hover {
+  color: var(--gold-light);
+}
+
+.modal-tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  text-shadow: 0 0 5px var(--gold-glow);
+}
+
+.modal-tab-content {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.modal-tab-content.active {
+  display: block;
+}
+
+/* Detalhes de Envio Internacional */
+.intl-details-box {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.intl-title {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+  border-bottom: 1px dashed rgba(212, 175, 55, 0.2);
+  padding-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.intl-row {
+  margin-bottom: 0.6rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.intl-label {
+  font-size: 0.85rem;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.intl-value {
+  color: var(--text-light);
+  font-family: monospace;
+  font-size: 1rem;
+  word-break: break-all;
+  background: rgba(0,0,0,0.2);
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.2rem;
+}
+
+.intl-text {
+  color: var(--silver);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+

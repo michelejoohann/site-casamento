@@ -9,25 +9,47 @@
   <!-- Estilos Personalizados -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="lang-pt">
+
+  <!-- SELETOR DE IDIOMAS FLUTUANTE -->
+  <div class="lang-switcher">
+    <button class="btn-lang active" id="btn-lang-pt" onclick="setLanguage('pt')">PT</button>
+    <span class="lang-divider">|</span>
+    <button class="btn-lang" id="btn-lang-en" onclick="setLanguage('en')">EN</button>
+  </div>
 
   <!-- HERO SECTION -->
   <header class="hero" id="inicio">
     <div class="hero-content">
-      <p class="hero-subtitle">Benvindos ao Nosso Conto de Amor</p>
+      <p class="hero-subtitle">
+        <span class="lang-pt">Bem-vindos ao Nosso Conto de Amor</span>
+        <span class="lang-en">Welcome to Our Love Tale</span>
+      </p>
       <h1 class="hero-title">Fabio & Michele</h1>
-      <p class="hero-date">21 de Setembro de 2027</p>
+      <p class="hero-date">
+        <span class="lang-pt">21 de Setembro de 2027</span>
+        <span class="lang-en">September 21, 2027</span>
+      </p>
       
       <div class="elven-divider">
         <div class="elven-divider-icon"></div>
       </div>
 
       <p class="hero-quote">
-        "As folhas eram longas, a relva era verde,<br>
-        as umbelas de cicuta altas e belas;<br>
-        e na clareira uma luz se via,<br>
-        de estrelas na sombra cintilando.<br>
-        Lúthien ali dançava..."
+        <span class="lang-pt">
+          "As folhas eram longas, a relva era verde,<br>
+          as umbelas de cicuta altas e belas;<br>
+          e na clareira uma luz se via,<br>
+          de estrelas na sombra cintilando.<br>
+          Lúthien ali dançava..."
+        </span>
+        <span class="lang-en">
+          "The leaves were long, the grass was green,<br>
+          the hemlock-umbels tall and fair;<br>
+          and in the glade a light was seen<br>
+          of stars in shadow shimmering.<br>
+          Lúthien there danced..."
+        </span>
         <span>— J.R.R. Tolkien, Beren e Lúthien</span>
       </p>
 
@@ -35,30 +57,39 @@
       <div class="countdown-container" id="countdown">
         <div class="countdown-box">
           <span class="countdown-number" id="days">00</span>
-          <span class="countdown-label">Dias</span>
+          <span class="countdown-label" id="label-days">Dias</span>
         </div>
         <div class="countdown-box">
           <span class="countdown-number" id="hours">00</span>
-          <span class="countdown-label">Horas</span>
+          <span class="countdown-label" id="label-hours">Horas</span>
         </div>
         <div class="countdown-box">
           <span class="countdown-number" id="minutes">00</span>
-          <span class="countdown-label">Minutos</span>
+          <span class="countdown-label" id="label-minutes">Minutos</span>
         </div>
         <div class="countdown-box">
           <span class="countdown-number" id="seconds">00</span>
-          <span class="countdown-label">Segundos</span>
+          <span class="countdown-label" id="label-seconds">Segundos</span>
         </div>
       </div>
 
-      <a href="#rsvp" class="btn-elf">Confirmar Presença</a>
+      <a href="#rsvp" class="btn-elf">
+        <span class="lang-pt">Confirmar Presença</span>
+        <span class="lang-en">RSVP Now</span>
+      </a>
     </div>
   </header>
 
   <!-- SEÇÃO NOSSA HISTÓRIA -->
   <section class="section container" id="historia">
-    <h2 class="section-title">Nosso Conto</h2>
-    <p class="section-subtitle">A união que cruza os caminhos do destino</p>
+    <h2 class="section-title">
+      <span class="lang-pt">Nosso Conto</span>
+      <span class="lang-en">Our Tale</span>
+    </h2>
+    <p class="section-subtitle">
+      <span class="lang-pt">A união que cruza os caminhos do destino</span>
+      <span class="lang-en">The union that crosses the paths of destiny</span>
+    </p>
     
     <div class="elven-divider">
       <div class="elven-divider-icon"></div>
@@ -66,15 +97,28 @@
 
     <div class="story-content">
       <div class="story-text">
-        <p>
-          Assim como o mortal Beren encontrou a bela elfa Lúthien dançando sob o luar nas florestas de Neldoreth, nossos caminhos se cruzaram de maneira mágica. Descobrimos no outro um amor forte o suficiente para superar qualquer desafio, unindo dois mundos em uma só melodia.
-        </p>
-        <p>
-          Com o tempo, percebemos que o nosso amor não era feito apenas de dias felizes, mas de cumplicidade, paciência e a decisão diária de caminhar lado a lado. Agora, sob o testemunho de quem amamos, estamos prontos para selar a nossa união e dar início ao capítulo mais bonito do nosso livro.
-        </p>
-        <p>
-          Convidamos você a fazer parte deste grande dia, onde celebraremos o amor, a lealdade e a eternidade de uma promessa.
-        </p>
+        <div class="lang-pt">
+          <p>
+            Assim como o mortal Beren encontrou a bela elfa Lúthien dançando sob o luar nas florestas de Neldoreth, nossos caminhos se cruzaram de maneira mágica. Descobrimos no outro um amor forte o suficiente para superar qualquer desafio, unindo dois mundos em uma só melodia.
+          </p>
+          <p>
+            Com o tempo, percebemos que o nosso amor não era feito apenas de dias felizes, mas de cumplicidade, paciência e a decisão diária de caminhar lado a lado. Agora, sob o testemunho de quem amamos, estamos prontos para selar a nossa união e dar início ao capítulo mais bonito do nosso livro.
+          </p>
+          <p>
+            Convidamos você a fazer parte deste grande dia, onde celebraremos o amor, a lealdade e a eternidade de uma promessa.
+          </p>
+        </div>
+        <div class="lang-en">
+          <p>
+            Just as the mortal Beren found the beautiful elf Lúthien dancing under the moonlight in the forests of Neldoreth, our paths crossed in a magical way. We discovered in each other a love strong enough to overcome any challenge, uniting two worlds into a single melody.
+          </p>
+          <p>
+            With time, we realized that our love was not just made of happy days, but of complicity, patience, and the daily decision to walk side by side. Now, witnessed by those we love, we are ready to seal our union and begin the most beautiful chapter of our book.
+          </p>
+          <p>
+            We invite you to be part of this great day, where we will celebrate love, loyalty, and the eternity of a promise.
+          </p>
+        </div>
       </div>
       <div class="story-image-container">
         <img class="story-image" src="images/story.png" alt="Fabio e Michele - Casal">
@@ -85,8 +129,14 @@
   <!-- SEÇÃO O GRANDE DIA (DETALHES) -->
   <section class="section section-darker" id="detalhes">
     <div class="container">
-      <h2 class="section-title">O Grande Dia</h2>
-      <p class="section-subtitle">Informações importantes do evento</p>
+      <h2 class="section-title">
+        <span class="lang-pt">O Grande Dia</span>
+        <span class="lang-en">The Big Day</span>
+      </h2>
+      <p class="section-subtitle">
+        <span class="lang-pt">Informações importantes do evento</span>
+        <span class="lang-en">Important event information</span>
+      </p>
 
       <div class="elven-divider">
         <div class="elven-divider-icon"></div>
@@ -96,21 +146,51 @@
         <!-- Cerimônia e Festa -->
         <div class="event-card">
           <div class="event-icon">⚔️</div>
-          <h3>Local e Horário</h3>
-          <p class="highlight">A definir</p>
-          <p>Nossas fadas e elfos estão preparando o melhor reino para nos receber.</p>
-          <p>Em breve divulgaremos o endereço exato e os horários aqui no site!</p>
-          <button class="btn-elf" disabled>Ver no Mapa (Em breve)</button>
+          <h3>
+            <span class="lang-pt">Local e Horário</span>
+            <span class="lang-en">Location & Time</span>
+          </h3>
+          <p class="highlight">
+            <span class="lang-pt">A definir</span>
+            <span class="lang-en">To be defined</span>
+          </p>
+          <p>
+            <span class="lang-pt">Nossas fadas e elfos estão preparando o melhor reino para nos receber.</span>
+            <span class="lang-en">Our fairies and elves are preparing the best realm to welcome us.</span>
+          </p>
+          <p>
+            <span class="lang-pt">Em breve divulgaremos o endereço exato e os horários aqui no site!</span>
+            <span class="lang-en">Soon we will reveal the exact address and times here on the website!</span>
+          </p>
+          <button class="btn-elf" disabled>
+            <span class="lang-pt">Ver no Mapa (Em breve)</span>
+            <span class="lang-en">View Map (Soon)</span>
+          </button>
         </div>
 
         <!-- Traje -->
         <div class="event-card">
           <div class="event-icon">🌸</div>
-          <h3>Traje Recomendado</h3>
-          <p class="highlight">Esporte Fino / Social Élfico</p>
-          <p>Para entrarmos em sintonia com a magia deste dia, sugerimos trajes elegantes de esporte fino.</p>
-          <p style="margin-top: 0.8rem; font-size: 1.1rem; color: var(--silver);">Para que nossa decoração e o cortejo se destaquem, pedimos gentilmente que os convidados <strong>evitem</strong> vestir roupas nos tons da paleta do evento: <em>verde floresta, terracota, azul crepúsculo, bege, off-white e dourado sutil</em>.</p>
-          <p style="margin-top: 0.8rem; font-size: 1.1rem; color: var(--silver);">Como nossa união será celebrada no equinócio da primavera, os tons das flores e folhas da estação (como lavanda, lilás, rosa antigo, coral suave, verde sálvia, mostarda ou cinza ardósia) são extremamente bem-vindos! O importante é você se sentir maravilhoso(a).</p>
+          <h3>
+            <span class="lang-pt">Traje Recomendado</span>
+            <span class="lang-en">Dress Code</span>
+          </h3>
+          <p class="highlight">
+            <span class="lang-pt">Esporte Fino / Social Élfico</span>
+            <span class="lang-en">Semi-Formal / Elven Dressy</span>
+          </p>
+          <p>
+            <span class="lang-pt">Para entrarmos em sintonia com a magia deste dia, sugerimos trajes elegantes de esporte fino.</span>
+            <span class="lang-en">To be in harmony with the magic of this day, we suggest elegant semi-formal attire.</span>
+          </p>
+          <p style="margin-top: 0.8rem; font-size: 1.1rem; color: var(--silver);">
+            <span class="lang-pt">Para que nossa decoração e o cortejo se destaquem, pedimos gentilmente que os convidados <strong>evitem</strong> vestir roupas nos tons da paleta do evento: <em>verde floresta, terracota, azul crepúsculo, bege, off-white e dourado sutil</em>.</span>
+            <span class="lang-en">To let our decoration and the wedding party stand out, we kindly ask guests to <strong>avoid</strong> wearing outfits in the event's color palette: <em>forest green, terracotta, twilight blue, beige, off-white, and subtle gold</em>.</span>
+          </p>
+          <p style="margin-top: 0.8rem; font-size: 1.1rem; color: var(--silver);">
+            <span class="lang-pt">Como nossa união será celebrada no equinócio da primavera, os tons das flores e folhas da estação (como lavanda, lilás, rosa antigo, coral suave, verde sálvia, mostarda ou cinza ardósia) são extremamente bem-vindos! O importante é você se sentir maravilhoso(a).</span>
+            <span class="lang-en">Since our union will be celebrated on the spring equinox, the tones of spring flowers and leaves (such as lavender, lilac, dusty rose, soft coral, sage green, mustard, or slate gray) are extremely welcome! The most important thing is that you feel wonderful.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -118,8 +198,14 @@
 
   <!-- SEÇÃO GALERIA DE FOTOS -->
   <section class="section container" id="galeria">
-    <h2 class="section-title">Galeria de Registros</h2>
-    <p class="section-subtitle">Momentos da nossa jornada compartilhada</p>
+    <h2 class="section-title">
+      <span class="lang-pt">Galeria de Registros</span>
+      <span class="lang-en">Gallery of Memories</span>
+    </h2>
+    <p class="section-subtitle">
+      <span class="lang-pt">Momentos da nossa jornada compartilhada</span>
+      <span class="lang-en">Moments of our shared journey</span>
+    </p>
 
     <div class="elven-divider">
       <div class="elven-divider-icon"></div>
@@ -129,29 +215,53 @@
       <div class="gallery-item">
         <img src="images/gallery_1.png" alt="Folha de Lórien">
         <div class="gallery-caption">
-          <h4>A Folha de Lórien</h4>
-          <p>Símbolo de proteção e amizade</p>
+          <h4>
+            <span class="lang-pt">A Folha de Lórien</span>
+            <span class="lang-en">The Leaf of Lórien</span>
+          </h4>
+          <p>
+            <span class="lang-pt">Símbolo de proteção e amizade</span>
+            <span class="lang-en">Symbol of protection and friendship</span>
+          </p>
         </div>
       </div>
       <div class="gallery-item">
         <img src="images/gallery_2.png" alt="Caminhos de Lórien">
         <div class="gallery-caption">
-          <h4>Caminhos de Lórien</h4>
-          <p>Florestas douradas sob o luar</p>
+          <h4>
+            <span class="lang-pt">Caminhos de Lórien</span>
+            <span class="lang-en">Caminhos de Lórien</span>
+          </h4>
+          <p>
+            <span class="lang-pt">Florestas douradas sob o luar</span>
+            <span class="lang-en">Golden forests under the moonlight</span>
+          </p>
         </div>
       </div>
       <div class="gallery-item">
         <img src="images/gallery_3.png" alt="Alianças Élficas">
         <div class="gallery-caption">
-          <h4>Alianças Élficas</h4>
-          <p>Promessa eterna de lealdade</p>
+          <h4>
+            <span class="lang-pt">Alianças Élficas</span>
+            <span class="lang-en">Elven Rings</span>
+          </h4>
+          <p>
+            <span class="lang-pt">Promessa eterna de lealdade</span>
+            <span class="lang-en">Eternal promise of loyalty</span>
+          </p>
         </div>
       </div>
       <div class="gallery-item">
         <img src="images/gallery_4.png" alt="A Partida para Valinor">
         <div class="gallery-caption">
-          <h4>A Partida para Valinor</h4>
-          <p>Uma nova jornada se inicia</p>
+          <h4>
+            <span class="lang-pt">A Partida para Valinor</span>
+            <span class="lang-en">The Departure to Valinor</span>
+          </h4>
+          <p>
+            <span class="lang-pt">Uma nova jornada se inicia</span>
+            <span class="lang-en">A new journey begins</span>
+          </p>
         </div>
       </div>
     </div>
@@ -160,15 +270,22 @@
   <!-- SEÇÃO LISTA DE PRESENTES -->
   <section class="section section-darker" id="presentes">
     <div class="container">
-      <h2 class="section-title">Lista de Presentes de Valinor</h2>
-      <p class="section-subtitle">Ajude-nos em nossa nova jornada</p>
+      <h2 class="section-title">
+        <span class="lang-pt">Lista de Presentes de Valinor</span>
+        <span class="lang-en">Valinor Gift List</span>
+      </h2>
+      <p class="section-subtitle">
+        <span class="lang-pt">Ajude-nos em nossa nova jornada</span>
+        <span class="lang-en">Help us on our new journey</span>
+      </p>
 
       <div class="elven-divider">
         <div class="elven-divider-icon"></div>
       </div>
 
       <div class="gifts-intro">
-        <p>Abaixo vocês encontrarão algumas opções de cotas virtuais divertidas e reais. Ao escolher presentear com uma cota, um modal se abrirá com os dados PIX para transferência do valor correspondente. Agradecemos imensamente o carinho!</p>
+        <p class="lang-pt">Abaixo vocês encontrarão algumas opções de cotas virtuais divertidas e reais. Ao escolher presentear com uma cota, um modal se abrirá com os dados PIX para transferência do valor correspondente. Agradecemos imensamente o carinho!</p>
+        <p class="lang-en">Below you will find some fun and real virtual gift options. By choosing to gift a quota, a modal will open with options for PIX transfer (Brazil) or international bank transfer / physical shipping details. We truly appreciate your kindness!</p>
       </div>
 
       <div class="gifts-grid">
@@ -178,10 +295,19 @@
             <img class="gift-img" src="images/gift_jantar.jpg" alt="Jantar Valfenda">
           </div>
           <div class="gift-info">
-            <h3 class="gift-title">Jantar Romântico em Valfenda</h3>
-            <p class="gift-desc">Um jantar com a melhor culinária élfica para repor as energias da nossa jornada.</p>
+            <h3 class="gift-title">
+              <span class="lang-pt">Jantar Romântico em Valfenda</span>
+              <span class="lang-en">Romantic Dinner in Rivendell</span>
+            </h3>
+            <p class="gift-desc">
+              <span class="lang-pt">Um jantar com a melhor culinária élfica para repor as energias da nossa jornada.</span>
+              <span class="lang-en">A dinner with the best elven cuisine to recharge our energy on this journey.</span>
+            </p>
             <div class="gift-price">R$ 150,00</div>
-            <button class="btn-elf btn-gift" data-title="Jantar Romântico em Valfenda" data-price="150,00">Presentear</button>
+            <button class="btn-elf btn-gift" data-title-pt="Jantar Romântico em Valfenda" data-title-en="Romantic Dinner in Rivendell" data-price="150,00">
+              <span class="lang-pt">Presentear</span>
+              <span class="lang-en">Give Gift</span>
+            </button>
           </div>
         </div>
 
@@ -191,10 +317,19 @@
             <img class="gift-img" src="images/gift_aguia.jpg" alt="Passagem Águia">
           </div>
           <div class="gift-info">
-            <h3 class="gift-title">Passagem de Águia (Lua de Mel)</h3>
-            <p class="gift-desc">Para que os noivos viajem seguros e rápidos nas asas da grande Gwaihir.</p>
+            <h3 class="gift-title">
+              <span class="lang-pt">Passagem de Águia (Lua de Mel)</span>
+              <span class="lang-en">Eagle Flight (Honeymoon)</span>
+            </h3>
+            <p class="gift-desc">
+              <span class="lang-pt">Para que os noivos viajem seguros e rápidos nas asas da grande Gwaihir.</span>
+              <span class="lang-en">So that the bride and groom travel safe and fast on the wings of the great Gwaihir.</span>
+            </p>
             <div class="gift-price">R$ 350,00</div>
-            <button class="btn-elf btn-gift" data-title="Passagem de Águia (Lua de Mel)" data-price="350,00">Presentear</button>
+            <button class="btn-elf btn-gift" data-title-pt="Passagem de Águia (Lua de Mel)" data-title-en="Eagle Flight (Honeymoon)" data-price="350,00">
+              <span class="lang-pt">Presentear</span>
+              <span class="lang-en">Give Gift</span>
+            </button>
           </div>
         </div>
 
@@ -204,10 +339,19 @@
             <img class="gift-img" src="images/gift_tijolo.jpg" alt="Toca Hobbit">
           </div>
           <div class="gift-info">
-            <h3 class="gift-title">Um tijolo para nossa toca de Hobbit</h3>
-            <p class="gift-desc">Uma ajuda essencial para começarmos a mobiliar e reformar nossa nova casinha.</p>
+            <h3 class="gift-title">
+              <span class="lang-pt">Um tijolo para nossa toca de Hobbit</span>
+              <span class="lang-en">A brick for our Hobbit hole</span>
+            </h3>
+            <p class="gift-desc">
+              <span class="lang-pt">Uma ajuda essencial para começarmos a mobiliar e reformar nossa nova casinha.</span>
+              <span class="lang-en">An essential contribution to start furnishing and renovating our cozy new little home.</span>
+            </p>
             <div class="gift-price">R$ 100,00</div>
-            <button class="btn-elf btn-gift" data-title="Um tijolo para nossa toca de Hobbit" data-price="100,00">Presentear</button>
+            <button class="btn-elf btn-gift" data-title-pt="Um tijolo para nossa toca de Hobbit" data-title-en="A brick for our Hobbit hole" data-price="100,00">
+              <span class="lang-pt">Presentear</span>
+              <span class="lang-en">Give Gift</span>
+            </button>
           </div>
         </div>
 
@@ -217,10 +361,19 @@
             <img class="gift-img" src="images/gift_banquete.jpg" alt="Pônei Saltitante">
           </div>
           <div class="gift-info">
-            <h3 class="gift-title">Banquete no Pônei Saltitante</h3>
-            <p class="gift-desc">Uma caneca de cerveja artesanal e um bom prato rústico para dar risada em Bree.</p>
+            <h3 class="gift-title">
+              <span class="lang-pt">Banquete no Pônei Saltitante</span>
+              <span class="lang-en">Banquet at the Prancing Pony</span>
+            </h3>
+            <p class="gift-desc">
+              <span class="lang-pt">Uma caneca de cerveja artesanal e um bom prato rústico para dar risada em Bree.</span>
+              <span class="lang-en">A giant pint of craft beer and a good rustic meal to share laughter in Bree.</span>
+            </p>
             <div class="gift-price">R$ 80,00</div>
-            <button class="btn-elf btn-gift" data-title="Banquete no Pônei Saltitante" data-price="80,00">Presentear</button>
+            <button class="btn-elf btn-gift" data-title-pt="Banquete no Pônei Saltitante" data-title-en="Banquet at the Prancing Pony" data-price="80,00">
+              <span class="lang-pt">Presentear</span>
+              <span class="lang-en">Give Gift</span>
+            </button>
           </div>
         </div>
 
@@ -230,10 +383,22 @@
             <img class="gift-img" src="images/gift_cozinha.jpg" alt="Cozinha Élfica">
           </div>
           <div class="gift-info">
-            <h3 class="gift-title">Equipamentos de Cozinha de Lórien</h3>
-            <p class="gift-desc">Cota livre para nos ajudar a comprar pratos, talheres e potes mágicos para a casa.</p>
-            <div class="gift-price">Cota Livre</div>
-            <button class="btn-elf btn-gift" data-title="Cota Livre - Equipamentos de Cozinha" data-price="Livre">Presentear</button>
+            <h3 class="gift-title">
+              <span class="lang-pt">Equipamentos de Cozinha de Lórien</span>
+              <span class="lang-en">Kitchenware from Lórien</span>
+            </h3>
+            <p class="gift-desc">
+              <span class="lang-pt">Cota livre para nos ajudar a comprar pratos, talheres e potes mágicos para a casa.</span>
+              <span class="lang-en">Free quota to help us buy magical plates, cutlery, and pots for our new home.</span>
+            </p>
+            <div class="gift-price">
+              <span class="lang-pt">Cota Livre</span>
+              <span class="lang-en">Free Quota</span>
+            </div>
+            <button class="btn-elf btn-gift" data-title-pt="Equipamentos de Cozinha de Lórien" data-title-en="Kitchenware from Lórien" data-price="Livre">
+              <span class="lang-pt">Presentear</span>
+              <span class="lang-en">Give Gift</span>
+            </button>
           </div>
         </div>
       </div>
@@ -242,8 +407,14 @@
 
   <!-- SEÇÃO RSVP -->
   <section class="section container" id="rsvp">
-    <h2 class="section-title">Confirmar Presença</h2>
-    <p class="section-subtitle">Por favor, responda até o dia 21/08/2027</p>
+    <h2 class="section-title">
+      <span class="lang-pt">Confirmar Presença</span>
+      <span class="lang-en">RSVP / Confirm Attendance</span>
+    </h2>
+    <p class="section-subtitle">
+      <span class="lang-pt">Por favor, responda até o dia 21/08/2027</span>
+      <span class="lang-en">Please RSVP by August 21, 2027</span>
+    </p>
 
     <div class="elven-divider">
       <div class="elven-divider-icon"></div>
@@ -252,53 +423,88 @@
     <div class="rsvp-container">
       <form id="rsvp-form">
         <div class="form-group">
-          <label for="name">Seu Nome Completo</label>
-          <input type="text" id="name" class="form-control" placeholder="Ex: Elrond de Valfenda" required>
+          <label for="name">
+            <span class="lang-pt">Seu Nome Completo</span>
+            <span class="lang-en">Your Full Name</span>
+          </label>
+          <input type="text" id="name" class="form-control" required>
         </div>
 
         <div class="form-group">
           <label for="email">E-mail</label>
-          <input type="email" id="email" class="form-control" placeholder="Ex: elrond@valfenda.com" required>
+          <input type="email" id="email" class="form-control" required>
         </div>
 
         <div class="form-group">
-          <label for="whatsapp">WhatsApp / Celular</label>
-          <input type="tel" id="whatsapp" class="form-control" placeholder="Ex: (11) 99999-9999" required>
+          <label for="whatsapp">
+            <span class="lang-pt">WhatsApp / Celular</span>
+            <span class="lang-en">WhatsApp / Phone Number</span>
+          </label>
+          <input type="tel" id="whatsapp" class="form-control" required>
         </div>
 
         <div class="form-group">
-          <label>Você comparecerá ao evento?</label>
+          <label>
+            <span class="lang-pt">Você comparecerá ao evento?</span>
+            <span class="lang-en">Will you attend the event?</span>
+          </label>
           <div class="radio-group">
             <label class="radio-option">
               <input type="radio" name="attendance" value="Confirmado" checked>
               <span class="radio-checkmark"></span>
-              Com certeza!
+              <span class="lang-pt">Com certeza!</span>
+              <span class="lang-en">Yes, absolutely!</span>
             </label>
             <label class="radio-option">
               <input type="radio" name="attendance" value="Ausente">
               <span class="radio-checkmark"></span>
-              Infelizmente não poderei ir.
+              <span class="lang-pt">Infelizmente não poderei ir.</span>
+              <span class="lang-en">Unfortunately, I cannot attend.</span>
             </label>
           </div>
         </div>
 
         <div class="form-group" id="companions-group">
-          <label for="companions">Quantidade de Acompanhantes</label>
+          <label for="companions">
+            <span class="lang-pt">Quantidade de Acompanhantes</span>
+            <span class="lang-en">Number of Companions</span>
+          </label>
           <select id="companions" class="form-control">
-            <option value="0">Apenas eu (0 acompanhantes)</option>
-            <option value="1">1 acompanhante</option>
-            <option value="2">2 acompanhantes</option>
-            <option value="3">3 acompanhantes</option>
-            <option value="4">4 acompanhantes</option>
+            <option value="0">
+              <span class="lang-pt">Apenas eu (0 acompanhantes)</span>
+              <span class="lang-en">Just me (0 companions)</span>
+            </option>
+            <option value="1">
+              <span class="lang-pt">1 acompanhante</span>
+              <span class="lang-en">1 companion</span>
+            </option>
+            <option value="2">
+              <span class="lang-pt">2 acompanhantes</span>
+              <span class="lang-en">2 companions</span>
+            </option>
+            <option value="3">
+              <span class="lang-pt">3 acompanhantes</span>
+              <span class="lang-en">3 companions</span>
+            </option>
+            <option value="4">
+              <span class="lang-pt">4 acompanhantes</span>
+              <span class="lang-en">4 companions</span>
+            </option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="message">Mensagem para os Noivos (Restrição alimentar, recados, etc.)</label>
-          <textarea id="message" class="form-control" rows="4" placeholder="Escreva aqui se tiver alguma alergia alimentar ou um recado elfo carinhoso para nós..."></textarea>
+          <label for="message">
+            <span class="lang-pt">Mensagem para os Noivos (Restrição alimentar, recados, etc.)</span>
+            <span class="lang-en">Message to the Couple (Dietary restrictions, wishes, etc.)</span>
+          </label>
+          <textarea id="message" class="form-control" rows="4"></textarea>
         </div>
 
-        <button type="submit" class="btn-submit">Enviar Confirmação</button>
+        <button type="submit" class="btn-submit" id="btn-submit-rsvp">
+          <span class="lang-pt">Enviar Confirmação</span>
+          <span class="lang-en">Send RSVP</span>
+        </button>
       </form>
     </div>
   </section>
@@ -308,10 +514,12 @@
     <div class="container">
       <span class="footer-logo">Fabio & Michele</span>
       <p class="footer-quote">
-        "O amor de Beren e Lúthien não se perdeu nos abismos da morte, permanecendo como um brilho eterno sobre a face da Terra."
+        <span class="lang-pt">"O amor de Beren e Lúthien não se perdeu nos abismos da morte, permanecendo como um brilho eterno sobre a face da Terra."</span>
+        <span class="lang-en">"The love of Beren and Lúthien was not lost in the abysses of death, remaining as an eternal light upon the face of the Earth."</span>
       </p>
       <p class="footer-credits">
-        © 2026-2027 • Feito com magia para Fabio & Michele
+        <span class="lang-pt">© 2026-2027 • Feito com magia para Fabio & Michele</span>
+        <span class="lang-en">© 2026-2027 • Made with magic for Fabio & Michele</span>
       </p>
     </div>
   </footer>
@@ -322,30 +530,106 @@
       <button class="modal-close" id="close-gift-modal">&times;</button>
       <h3 id="modal-gift-title">Presente Selecionado</h3>
       <p style="margin: 0.5rem 0 1.5rem 0; color: var(--silver);">
-        Valor da cota: <span id="modal-gift-price" style="color: var(--gold); font-weight: bold;">R$ 0,00</span>
-      </p>
-      
-      <p style="font-size: 1rem; color: var(--silver); text-align: left; margin-bottom: 1rem;">
-        Para presentear os noivos, escaneie o código abaixo com o aplicativo do seu banco ou copie a chave PIX e realize a transferência.
+        <span class="lang-pt">Valor da cota:</span>
+        <span class="lang-en">Gift value:</span>
+        <span id="modal-gift-price" style="color: var(--gold); font-weight: bold;">R$ 0,00</span>
       </p>
 
-      <!-- Placeholder QR Code PIX -->
-      <div class="pix-qr-container">
-        <svg style="width: 100%; height: 100%; fill: #07130e;" viewBox="0 0 24 24">
-          <!-- Um SVG simulando QR Code elegante -->
-          <path d="M2,2 H8 V8 H2 Z M4,4 V6 H6 V4 Z M2,16 H8 V22 H2 Z M4,18 V20 H6 V18 Z M16,2 H22 V8 H16 Z M18,4 V6 H20 V4 Z M10,2 H14 V6 H10 Z M10,8 H14 V12 H10 Z M14,14 H18 V18 H14 Z M16,10 H20 V14 H16 Z M10,16 H14 V20 H10 Z M18,18 H22 V22 H18 Z"/>
-        </svg>
+      <!-- Abas do Modal -->
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" id="tab-pix-btn">PIX (Brasil)</button>
+        <button class="modal-tab-btn" id="tab-intl-btn">
+          <span class="lang-pt">Internacional</span>
+          <span class="lang-en">International</span>
+        </button>
       </div>
 
-      <div class="pix-key-box">
-        <div class="pix-key-text" id="pix-key-val">pix@casamentofabioemichele.com.br</div>
-        <button class="btn-copy" id="btn-copy-pix">Copiar</button>
+      <!-- Conteúdo da Aba PIX -->
+      <div class="modal-tab-content active" id="tab-pix-content">
+        <p class="intl-text lang-pt" style="font-size: 1.1rem; text-align: left; margin-bottom: 1rem;">
+          Para presentear os noivos, escaneie o código abaixo com o aplicativo do seu banco ou copie a chave PIX e realize a transferência.
+        </p>
+        <p class="intl-text lang-en" style="font-size: 1.1rem; text-align: left; margin-bottom: 1rem;">
+          To gift the couple, scan the QR code below with your banking app or copy the PIX key to complete the transfer.
+        </p>
+
+        <!-- Placeholder QR Code PIX -->
+        <div class="pix-qr-container">
+          <svg style="width: 100%; height: 100%; fill: #07130e;" viewBox="0 0 24 24">
+            <path d="M2,2 H8 V8 H2 Z M4,4 V6 H6 V4 Z M2,16 H8 V22 H2 Z M4,18 V20 H6 V18 Z M16,2 H22 V8 H16 Z M18,4 V6 H20 V4 Z M10,2 H14 V6 H10 Z M10,8 H14 V12 H10 Z M14,14 H18 V18 H14 Z M16,10 H20 V14 H16 Z M10,16 H14 V20 H10 Z M18,18 H22 V22 H18 Z"/>
+          </svg>
+        </div>
+
+        <div class="pix-key-box">
+          <div class="pix-key-text" id="pix-key-val">pix@casamentofabioemichele.com.br</div>
+          <button class="btn-copy" id="btn-copy-pix">Copiar</button>
+        </div>
+
+        <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); text-align: center;">
+          <span class="lang-pt">Destinatário: Fabio & Michele Casamento S.A.<br>Banco: Banco de Valinor</span>
+          <span class="lang-en">Recipient: Fabio & Michele Casamento S.A.<br>Bank: Bank of Valinor</span>
+        </p>
       </div>
 
-      <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.4);">
-        Destinatário: Fabio & Michele Casamento S.A.<br>
-        Banco: Banco de Valinor
-      </p>
+      <!-- Conteúdo da Aba Internacional -->
+      <div class="modal-tab-content" id="tab-intl-content">
+        <p class="intl-text lang-pt">
+          Como o PIX funciona apenas no Brasil, você pode nos presentear enviando uma transferência internacional para a conta bancária da noiva ou enviando um presente físico para o nosso endereço.
+        </p>
+        <p class="intl-text lang-en">
+          Since PIX only works in Brazil, you can send your gift via international bank transfer to the bride's account or ship a physical gift to our home address.
+        </p>
+
+        <!-- Detalhes de Conta Bancária -->
+        <div class="intl-details-box">
+          <div class="intl-title">
+            🏦 
+            <span class="lang-pt">Transferência Bancária (Noiva)</span>
+            <span class="lang-en">Bank Account Details (Bride)</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">Beneficiary Name / Titular</span>
+            <span class="intl-value">Michele Joohann</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">Bank Name / Banco</span>
+            <span class="intl-value">Banco do Brasil S.A.</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">SWIFT / BIC Code</span>
+            <span class="intl-value">BRASBRBXXXX</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">IBAN / Account Number</span>
+            <span class="intl-value">BR760000100200300400500600700</span>
+          </div>
+        </div>
+
+        <!-- Endereço para Presentes Físicos -->
+        <div class="intl-details-box">
+          <div class="intl-title">
+            📦 
+            <span class="lang-pt">Endereço para Envio Físico</span>
+            <span class="lang-en">Shipping Address</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">Recipients / Destinatários</span>
+            <span class="intl-value">Michele Joohann & Fabio</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">Street & Number / Rua e Número</span>
+            <span class="intl-value">Rua das Flores, 123 - Apto 45</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">City, State, Zip / Cidade, UF, CEP</span>
+            <span class="intl-value">Curitiba, PR - CEP: 80000-000</span>
+          </div>
+          <div class="intl-row">
+            <span class="intl-label">Country / País</span>
+            <span class="intl-value">Brazil / Brasil</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
