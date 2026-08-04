@@ -12,12 +12,12 @@ const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
 // O sistema é inteligente: ele ignora acentos, maiúsculas/minúsculas e espaços extras ao validar.
 const GUEST_LIST = {
   "Brixius": 1,
+  "Dani, Jardel, Livia, Alice e acompanhantes": 5, // Dani + 5 acompanhantes (Jardel, Livia, Alice + 2 extras) = 6 pessoas no total
   "Fabio": 0,
   "Michele": 0,
   "Elrond": 1,
   "Arwen Undomiel": 2,
   "Galadriel": 3,
-  "Celeborn": 1,
   "Frodo Bolseiro": 0,
   "Samwise Gamgi": 1
 };
