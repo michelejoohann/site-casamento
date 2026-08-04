@@ -68,8 +68,8 @@ const translations = {
     adminTitle: "Presente Selecionado",
     searchSuccess: "Olá, {name}! Convite localizado. Você pode confirmar sua presença e de até {limit} acompanhante(s).",
     searchSuccessIndividual: "Olá, {name}! Convite localizado. Confirmar convite individual.",
-    searchError: "Desculpe, não encontramos seu nome na lista de convidados. Por favor, digite o nome completo ou contate os noivos.",
     searchTooShort: "Por favor, digite pelo menos 3 letras para realizar a busca.",
+    searchAlreadyConfirmed: "⚠️ Atenção: Este convite já foi confirmado anteriormente. Se você enviar novamente, os novos dados substituirão os anteriores.",
     companionLabel: "Nome do Acompanhante {num}",
     companionPlaceholder: "Nome completo do acompanhante",
     companionsOptions: {
@@ -94,8 +94,8 @@ const translations = {
     adminTitle: "Selected Gift",
     searchSuccess: "Hello, {name}! Invitation found. You can confirm attendance for yourself and up to {limit} companion(s).",
     searchSuccessIndividual: "Hello, {name}! Invitation found. Confirming individual invitation.",
-    searchError: "Sorry, we could not find your name on the guest list. Please check the spelling or contact the couple.",
     searchTooShort: "Please type at least 3 letters to search.",
+    searchAlreadyConfirmed: "⚠️ Notice: This invitation has already been confirmed. Submitting again will overwrite the previous confirmation.",
     companionLabel: "Companion {num} Name",
     companionPlaceholder: "Companion's full name",
     companionsOptions: {
@@ -337,6 +337,9 @@ function searchInvitation() {
     
     validationMsg.innerHTML = `<span style="color: #4ade80;">${msgTemplate.replace("{name}", matchedName).replace("{limit}", matchedLimit)}</span>`;
     
+    // Checa se já foi confirmado anteriormente
+    checkPreviousConfirmation(matchedName);
+
     // Configura o seletor de acompanhantes
     buildCompanionsDropdown(matchedLimit);
 
@@ -350,6 +353,49 @@ function searchInvitation() {
     validatedGuestName = "";
     validatedLimit = 0;
   }
+}
+
+// Checa se o convidado já confirmou presença (no Google Sheets ou localmente)
+function checkPreviousConfirmation(guestName) {
+  const normalizedGuest = normalizeText(guestName);
+  
+  if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
+    // Busca na planilha do Google (GET)
+    const checkUrl = `${GOOGLE_SHEET_URL}?name=${encodeURIComponent(guestName)}`;
+    fetch(checkUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.found) {
+          showAlreadyConfirmedWarning();
+        }
+      })
+      .catch(err => console.log("Consulta de confirmação anterior silenciada:", err));
+  } else {
+    // Busca no localStorage local
+    const localRSVPs = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
+    const alreadyConfirmed = localRSVPs.some(rsvp => normalizeText(rsvp.name) === normalizedGuest);
+    if (alreadyConfirmed) {
+      showAlreadyConfirmedWarning();
+    }
+  }
+}
+
+// Mostra o card de aviso de sobrescrita
+function showAlreadyConfirmedWarning() {
+  const warningEl = document.createElement("div");
+  warningEl.style.marginTop = "0.8rem";
+  warningEl.style.color = "#fbbf24";
+  warningEl.style.fontSize = "0.95rem";
+  warningEl.style.fontWeight = "600";
+  warningEl.style.lineHeight = "1.4";
+  warningEl.style.border = "1px solid rgba(251, 191, 36, 0.25)";
+  warningEl.style.background = "rgba(251, 191, 36, 0.05)";
+  warningEl.style.padding = "0.8rem";
+  warningEl.style.borderRadius = "8px";
+  warningEl.style.textAlign = "left";
+  warningEl.style.animation = "fadeInUp 0.3s ease";
+  warningEl.innerHTML = translations[currentLanguage].searchAlreadyConfirmed;
+  validationMsg.appendChild(warningEl);
 }
 
 // Preenche dinamicamente as opções de acompanhante
@@ -489,10 +535,17 @@ rsvpForm.addEventListener("submit", (e) => {
     });
 
   } else {
-    // Fallback local (localStorage)
+    // Fallback local (localStorage) - Sobrescreve se já existir
     let currentRSVPs = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
-    rsvpData.id = Date.now();
-    currentRSVPs.push(rsvpData);
+    const normalizedNew = normalizeText(rsvpData.name);
+    const existingIndex = currentRSVPs.findIndex(rsvp => normalizeText(rsvp.name) === normalizedNew);
+
+    if (existingIndex !== -1) {
+      currentRSVPs[existingIndex] = rsvpData; // Sobrescreve o anterior
+    } else {
+      currentRSVPs.push(rsvpData); // Adiciona novo
+    }
+    
     localStorage.setItem("wedding_rsvps", JSON.stringify(currentRSVPs));
 
     showRsvpSuccess(name, attendance);
@@ -677,25 +730,54 @@ window.addEventListener("click", (e) => {
 
 /*
 =================================================================================
-CÓDIGO ATUALIZADO DO GOOGLE APPS SCRIPT (ADICIONADA A COLUNA DE NOMES DE ACOMPANHANTES)
+CÓDIGO ATUALIZADO DO GOOGLE APPS SCRIPT (COM SOBRESCRITA E SUPORTE A BUSCA GET)
 =================================================================================
 
+// 1. Processa requisições POST para salvar/atualizar confirmações
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = JSON.parse(e.postData.contents);
     
-    // Insere os dados na planilha como uma nova linha (8 colunas)
-    sheet.appendRow([
+    var nameToFind = data.name;
+    var sheetData = sheet.getDataRange().getValues();
+    var rowIndex = -1;
+    
+    var normalize = function(text) {
+      return text.toString().trim().toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+    
+    var normalizedSearch = normalize(nameToFind);
+    
+    // Procura se já existe uma confirmação com esse nome para sobrescrever
+    for (var i = 1; i < sheetData.length; i++) {
+      var rowName = sheetData[i][0]; // Coluna A (Nome)
+      if (normalize(rowName) === normalizedSearch) {
+        rowIndex = i + 1; // Google Sheets é 1-indexed
+        break;
+      }
+    }
+    
+    var rowData = [
       data.name,
       data.email,
       data.whatsapp,
       data.attendance,
       data.companions,
-      data.companionNames || "", // Nova coluna!
+      data.companionNames || "",
       data.message,
       data.date || new Date().toLocaleString("pt-BR")
-    ]);
+    ];
+    
+    if (rowIndex !== -1) {
+      // Sobrescreve a linha do convidado existente
+      var range = sheet.getRange(rowIndex, 1, 1, rowData.length);
+      range.setValues([rowData]);
+    } else {
+      // Adiciona uma nova linha se for inédito
+      sheet.appendRow(rowData);
+    }
     
     return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
       .setMimeType(ContentService.MimeType.JSON)
@@ -703,6 +785,46 @@ function doPost(e) {
       
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+  }
+}
+
+// 2. Processa requisições GET para checar se um convidado já confirmou
+function doGet(e) {
+  try {
+    var nameToFind = e.parameter.name;
+    if (!nameToFind) {
+      return ContentService.createTextOutput(JSON.stringify({ "found": false }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader('Access-Control-Allow-Origin', '*');
+    }
+    
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var sheetData = sheet.getDataRange().getValues();
+    var found = false;
+    
+    var normalize = function(text) {
+      return text.toString().trim().toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+    
+    var normalizedSearch = normalize(nameToFind);
+    
+    for (var i = 1; i < sheetData.length; i++) {
+      var rowName = sheetData[i][0]; // Coluna A (Nome)
+      if (normalize(rowName) === normalizedSearch) {
+        found = true;
+        break;
+      }
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ "found": found }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+      
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ "found": false, "error": error.toString() }))
       .setMimeType(ContentService.MimeType.JSON)
       .setHeader('Access-Control-Allow-Origin', '*');
   }
