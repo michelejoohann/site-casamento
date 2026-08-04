@@ -1,7 +1,7 @@
 // CONFIGURAÇÕES DO CASAMENTO
 // 1. Cole aqui a URL gerada pelo Google Apps Script (ex: https://script.google.com/macros/s/AKfycb.../exec)
 // Se deixar como está, o site usará o painel administrativo local (localStorage) como teste.
-const GOOGLE_SHEET_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycby5dkuaZIYN9XMYR8PvZDPa68TD3g_OOLVMaRfd826DWDP64JFb75yCJocbVNVfeH0i/execSUA_URL_DO_GOOGLE_SCRIPT_AQUI";
 
 const CASAMENTO_DATE = new Date("2027-09-21T19:00:00").getTime(); // 21 de Setembro de 2027, 19:00h
 const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
@@ -57,7 +57,7 @@ document.querySelectorAll(".btn-gift").forEach(button => {
 
     modalGiftTitle.textContent = giftTitle;
     modalGiftPrice.textContent = giftPrice === "Livre" ? "Valor Livre" : `R$ ${giftPrice}`;
-    
+
     giftModal.classList.add("active");
   });
 });
@@ -137,21 +137,21 @@ rsvpForm.addEventListener("submit", (e) => {
       },
       body: JSON.stringify(rsvpData)
     })
-    .then(() => {
-      // Como usamos 'no-cors' para evitar problemas de CORS do Google Script,
-      // a resposta retorna opaca, mas a gravação é concluída com sucesso.
-      showRsvpSuccess(name, attendance);
-      rsvpForm.reset();
-      companionsGroup.style.display = "block";
-    })
-    .catch(err => {
-      console.error("Erro ao enviar para planilha: ", err);
-      alert("Houve um erro ao enviar sua confirmação. Por favor, tente novamente.");
-    })
-    .finally(() => {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Enviar Confirmação";
-    });
+      .then(() => {
+        // Como usamos 'no-cors' para evitar problemas de CORS do Google Script,
+        // a resposta retorna opaca, mas a gravação é concluída com sucesso.
+        showRsvpSuccess(name, attendance);
+        rsvpForm.reset();
+        companionsGroup.style.display = "block";
+      })
+      .catch(err => {
+        console.error("Erro ao enviar para planilha: ", err);
+        alert("Houve um erro ao enviar sua confirmação. Por favor, tente novamente.");
+      })
+      .finally(() => {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "Enviar Confirmação";
+      });
 
   } else {
     // Caso de teste/fallback: Salvar localmente no localStorage
@@ -199,7 +199,7 @@ if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
 adminBtn.addEventListener("click", () => {
   adminModal.classList.add("active");
   adminPassInput.value = "";
-  
+
   if (isAdminAuthenticated) {
     adminAuthSection.style.display = "none";
     adminDataSection.style.display = "block";
@@ -261,7 +261,7 @@ function renderGuestList() {
 // Utilitário para sanitizar HTML
 function escapeHTML(str) {
   if (!str) return "";
-  return str.replace(/[&<>'"]/g, 
+  return str.replace(/[&<>'"]/g,
     tag => ({
       '&': '&amp;',
       '<': '&lt;',
