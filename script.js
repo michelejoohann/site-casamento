@@ -543,6 +543,36 @@ inputName.addEventListener("dblclick", () => {
   }
 });
 
+// Máscara e formatação para o campo WhatsApp / Celular
+const whatsappInput = document.getElementById("whatsapp");
+whatsappInput.addEventListener("input", (e) => {
+  let value = e.target.value;
+  
+  // Se começar com "+", trata como internacional e permite formato livre com hífens e parênteses
+  if (value.startsWith("+")) {
+    let plus = "+";
+    let rest = value.substring(1).replace(/[^\d\s\-\(\)]/g, "");
+    e.target.value = (plus + rest).substring(0, 18);
+    return;
+  }
+  
+  // Caso contrário, aplica a máscara padrão brasileira (DDD + 9 ou 8 dígitos)
+  let digits = value.replace(/\D/g, "");
+  digits = digits.substring(0, 11); // Limita a 11 dígitos
+  
+  if (digits.length === 0) {
+    e.target.value = "";
+  } else if (digits.length <= 2) {
+    e.target.value = `(${digits}`;
+  } else if (digits.length <= 6) {
+    e.target.value = `(${digits.substring(0, 2)}) ${digits.substring(2)}`;
+  } else if (digits.length <= 10) {
+    e.target.value = `(${digits.substring(0, 2)}) ${digits.substring(2, 6)}-${digits.substring(6)}`;
+  } else {
+    e.target.value = `(${digits.substring(0, 2)}) ${digits.substring(2, 7)}-${digits.substring(7)}`;
+  }
+});
+
 // Esconder slots caso a resposta seja 'Ausente'
 radioAttendance.forEach(radio => {
   radio.addEventListener("change", (e) => {
