@@ -6,6 +6,22 @@ const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycby5dkuaZIYN9XM
 const CASAMENTO_DATE = new Date("2027-09-21T19:00:00").getTime(); // 21 de Setembro de 2027, 19:00h
 const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
 
+// 2. LISTA OFICIAL DE CONVIDADOS E LIMITE DE ACOMPANHANTES
+// Chave: Nome exato do convidado principal (como você enviará no convite).
+// Valor: Limite máximo de acompanhantes que essa pessoa pode levar (0 significa individual).
+// O sistema é inteligente: ele ignora acentos, maiúsculas/minúsculas e espaços extras ao validar.
+const GUEST_LIST = {
+  "Brixius": 1,
+  "Fabio": 0,
+  "Michele": 0,
+  "Elrond": 1,
+  "Arwen Undomiel": 2,
+  "Galadriel": 3,
+  "Celeborn": 1,
+  "Frodo Bolseiro": 0,
+  "Samwise Gamgi": 1
+};
+
 // Elementos da página
 const elDays = document.getElementById("days");
 const elHours = document.getElementById("hours");
@@ -23,7 +39,7 @@ const labelSeconds = document.getElementById("label-seconds");
 const translations = {
   pt: {
     days: "Dias", hours: "Horas", minutes: "Minutos", seconds: "Segundos",
-    placeholderName: "Ex: Elrond de Valfenda",
+    placeholderName: "Seu nome como está no convite",
     placeholderEmail: "Ex: elrond@valfenda.com",
     placeholderWhatsapp: "Ex: (11) 99999-9999",
     placeholderMsg: "Escreva aqui se tiver alguma alergia alimentar ou um recado elfo...",
@@ -34,11 +50,21 @@ const translations = {
     errorSubmit: "Houve um erro ao enviar sua confirmação. Por favor, tente novamente.",
     copiar: "Copiar",
     copiado: "Copiado!",
-    adminTitle: "Presente Selecionado"
+    adminTitle: "Presente Selecionado",
+    searchSuccess: "Olá, {name}! Convite localizado. Você pode confirmar sua presença e de até {limit} acompanhante(s).",
+    searchSuccessIndividual: "Olá, {name}! Convite localizado. Confirmar convite individual.",
+    searchError: "Desculpe, não encontramos seu nome na lista de convidados. Por favor, digite o nome completo ou contate os noivos.",
+    companionLabel: "Nome do Acompanhante {num}",
+    companionPlaceholder: "Nome completo do acompanhante",
+    companionsOptions: {
+      justMe: "Apenas eu (0 acompanhantes)",
+      one: "1 acompanhante",
+      multiple: "{num} acompanhantes"
+    }
   },
   en: {
     days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds",
-    placeholderName: "e.g., Elrond of Rivendell",
+    placeholderName: "Your name as written on the invitation",
     placeholderEmail: "e.g., elrond@rivendell.com",
     placeholderWhatsapp: "e.g., +1 (123) 456-7890",
     placeholderMsg: "Write here if you have any food allergies or a warm message...",
@@ -49,7 +75,17 @@ const translations = {
     errorSubmit: "There was an error sending your confirmation. Please try again.",
     copiar: "Copy",
     copiado: "Copied!",
-    adminTitle: "Selected Gift"
+    adminTitle: "Selected Gift",
+    searchSuccess: "Hello, {name}! Invitation found. You can confirm attendance for yourself and up to {limit} companion(s).",
+    searchSuccessIndividual: "Hello, {name}! Invitation found. Confirming individual invitation.",
+    searchError: "Sorry, we could not find your name on the guest list. Please check the spelling or contact the couple.",
+    companionLabel: "Companion {num} Name",
+    companionPlaceholder: "Companion's full name",
+    companionsOptions: {
+      justMe: "Just me (0 companions)",
+      one: "1 companion",
+      multiple: "{num} companions"
+    }
   }
 };
 
@@ -84,6 +120,16 @@ function setLanguage(lang) {
     btnSubmit.querySelector("span.lang-pt").textContent = translations.pt.submitBtn;
     btnSubmit.querySelector("span.lang-en").textContent = translations.en.submitBtn;
   }
+  
+  // Atualiza os placeholders dos inputs de acompanhantes se estiverem visíveis
+  document.querySelectorAll(".companion-name-input").forEach((input, index) => {
+    input.placeholder = translations[lang].companionPlaceholder;
+    const label = input.previousElementSibling;
+    if (label) {
+      label.querySelector("span.lang-pt").textContent = translations.pt.companionLabel.replace("{num}", index + 1);
+      label.querySelector("span.lang-en").textContent = translations.en.companionLabel.replace("{num}", index + 1);
+    }
+  });
 }
 
 // Inicializa o idioma
@@ -152,7 +198,6 @@ tabIntlBtn.addEventListener("click", () => selectModalTab("international"));
 // Abrir modal de presente
 document.querySelectorAll(".btn-gift").forEach(button => {
   button.addEventListener("click", () => {
-    // Escolhe o título baseado no idioma ativo
     const giftTitle = currentLanguage === "en" 
       ? button.getAttribute("data-title-en") 
       : button.getAttribute("data-title-pt");
@@ -166,7 +211,6 @@ document.querySelectorAll(".btn-gift").forEach(button => {
       modalGiftPrice.textContent = `R$ ${giftPrice}`;
     }
 
-    // Reseta para a primeira aba (PIX) ao abrir
     selectModalTab("pix");
     btnCopyPix.textContent = translations[currentLanguage].copiar;
     giftModal.classList.add("active");
@@ -195,20 +239,167 @@ btnCopyPix.addEventListener("click", () => {
 });
 
 // =========================================
-// 4. FLUXO RSVP (CONFIRMAÇÃO DE PRESENÇA)
+// 4. FLUXO RSVP (BUSCA DE CONVITE E CONFIRMAÇÃO)
 // =========================================
 const rsvpForm = document.getElementById("rsvp-form");
+const inputName = document.getElementById("name");
+const btnSearchInvite = document.getElementById("btn-search-invite");
+const validationMsg = document.getElementById("validation-msg");
+const rsvpFields = document.getElementById("rsvp-fields");
+const companionsSelect = document.getElementById("companions");
+const companionNamesContainer = document.getElementById("companion-names-container");
+const companionsGroup = document.getElementById("companions-group");
 const btnSubmitRsvp = document.getElementById("btn-submit-rsvp");
 const radioAttendance = document.getElementsByName("attendance");
-const companionsGroup = document.getElementById("companions-group");
 
-// Esconder/Mostrar campo de acompanhantes baseado na resposta
+let validatedGuestName = "";
+let validatedLimit = 0;
+
+// Remove acentos e padroniza string para buscas seguras
+function normalizeText(text) {
+  return text.trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+// Lógica de busca de convidado
+function searchInvitation() {
+  const typedName = inputName.value.trim();
+  if (!typedName) return;
+
+  const normalizedTyped = normalizeText(typedName);
+  let matchedName = "";
+  let matchedLimit = 0;
+  let found = false;
+
+  for (let guest in GUEST_LIST) {
+    if (normalizeText(guest) === normalizedTyped) {
+      matchedName = guest;
+      matchedLimit = GUEST_LIST[guest];
+      found = true;
+      break;
+    }
+  }
+
+  if (found) {
+    validatedGuestName = matchedName;
+    validatedLimit = matchedLimit;
+
+    // Atualiza campo de texto com a grafia correta
+    inputName.value = matchedName;
+    inputName.readOnly = true;
+    btnSearchInvite.style.display = "none";
+
+    // Mensagem de sucesso
+    const msgTemplate = matchedLimit > 0 
+      ? translations[currentLanguage].searchSuccess 
+      : translations[currentLanguage].searchSuccessIndividual;
+    
+    validationMsg.innerHTML = `<span style="color: #4ade80;">${msgTemplate.replace("{name}", matchedName).replace("{limit}", matchedLimit)}</span>`;
+    
+    // Configura o seletor de acompanhantes
+    buildCompanionsDropdown(matchedLimit);
+
+    // Abre o formulário
+    rsvpFields.style.display = "block";
+    companionsGroup.style.display = matchedLimit > 0 ? "block" : "none";
+  } else {
+    // Mensagem de erro
+    validationMsg.innerHTML = `<span style="color: #f87171;">${translations[currentLanguage].searchError}</span>`;
+    rsvpFields.style.display = "none";
+    validatedGuestName = "";
+    validatedLimit = 0;
+  }
+}
+
+// Preenche dinamicamente as opções de acompanhante
+function buildCompanionsDropdown(limit) {
+  companionsSelect.innerHTML = "";
+  companionNamesContainer.innerHTML = ""; // Limpa inputs de nomes
+
+  // Opção: Apenas eu
+  const opt0 = document.createElement("option");
+  opt0.value = "0";
+  opt0.innerHTML = `
+    <span class="lang-pt">${translations.pt.companionsOptions.justMe}</span>
+    <span class="lang-en">${translations.en.companionsOptions.justMe}</span>
+  `;
+  companionsSelect.appendChild(opt0);
+
+  // Adiciona opções até o limite máximo do convite
+  for (let i = 1; i <= limit; i++) {
+    const opt = document.createElement("option");
+    opt.value = i;
+    if (i === 1) {
+      opt.innerHTML = `
+        <span class="lang-pt">${translations.pt.companionsOptions.one}</span>
+        <span class="lang-en">${translations.en.companionsOptions.one}</span>
+      `;
+    } else {
+      opt.innerHTML = `
+        <span class="lang-pt">${translations.pt.companionsOptions.multiple.replace("{num}", i)}</span>
+        <span class="lang-en">${translations.en.companionsOptions.multiple.replace("{num}", i)}</span>
+      `;
+    }
+    companionsSelect.appendChild(opt);
+  }
+}
+
+// Cria inputs de texto para os acompanhantes
+companionsSelect.addEventListener("change", () => {
+  const count = parseInt(companionsSelect.value, 10);
+  companionNamesContainer.innerHTML = "";
+
+  for (let i = 1; i <= count; i++) {
+    const group = document.createElement("div");
+    group.className = "form-group";
+    group.style.marginBottom = "1rem";
+    group.style.animation = "fadeInUp 0.3s ease";
+    group.innerHTML = `
+      <label style="font-size: 0.9rem; color: var(--gold-light); margin-bottom: 0.4rem; display: block;">
+        <span class="lang-pt">${translations.pt.companionLabel.replace("{num}", i)}</span>
+        <span class="lang-en">${translations.en.companionLabel.replace("{num}", i)}</span>
+      </label>
+      <input type="text" class="form-control companion-name-input" required placeholder="${translations[currentLanguage].companionPlaceholder}">
+    `;
+    companionNamesContainer.appendChild(group);
+  }
+});
+
+// Triggers para a busca
+btnSearchInvite.addEventListener("click", searchInvitation);
+inputName.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    searchInvitation();
+  }
+});
+
+// Se clicar duas vezes no campo de nome já validado, libera para editar e buscar outro
+inputName.addEventListener("dblclick", () => {
+  if (inputName.readOnly) {
+    inputName.readOnly = false;
+    btnSearchInvite.style.display = "flex";
+    rsvpFields.style.display = "none";
+    validationMsg.innerHTML = "";
+    validatedGuestName = "";
+    validatedLimit = 0;
+  }
+});
+
+// Esconder acompanhantes caso a resposta seja 'Ausente'
 radioAttendance.forEach(radio => {
   radio.addEventListener("change", (e) => {
     if (e.target.value === "Ausente") {
       companionsGroup.style.display = "none";
+      companionNamesContainer.innerHTML = "";
     } else {
-      companionsGroup.style.display = "block";
+      if (validatedLimit > 0) {
+        companionsGroup.style.display = "block";
+        // Recria os inputs de acordo com a seleção atual
+        companionsSelect.dispatchEvent(new Event("change"));
+      }
     }
   });
 });
@@ -217,20 +408,27 @@ radioAttendance.forEach(radio => {
 rsvpForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
+  const name = validatedGuestName || inputName.value.trim();
   const email = document.getElementById("email").value.trim();
   const whatsapp = document.getElementById("whatsapp").value.trim();
   const attendance = document.querySelector('input[name="attendance"]:checked').value;
-  const companions = attendance === "Ausente" ? 0 : parseInt(document.getElementById("companions").value, 10);
-  const message = document.getElementById("message").value.trim();
+  const companionsCount = attendance === "Ausente" ? 0 : parseInt(companionsSelect.value, 10);
+  
+  // Coleta os nomes digitados nos inputs de acompanhantes
+  const companionInputs = document.querySelectorAll(".companion-name-input");
+  const companionNames = Array.from(companionInputs)
+    .map(inp => inp.value.trim())
+    .filter(Boolean)
+    .join(", ");
 
   const rsvpData = {
     name,
     email,
     whatsapp,
     attendance,
-    companions,
-    message,
+    companions: companionsCount,
+    companionNames: companionNames || "", // Enviado ao Google Sheets
+    message: document.getElementById("message").value.trim(),
     date: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR")
   };
 
@@ -249,8 +447,7 @@ rsvpForm.addEventListener("submit", (e) => {
     })
     .then(() => {
       showRsvpSuccess(name, attendance);
-      rsvpForm.reset();
-      companionsGroup.style.display = "block";
+      resetRsvpForm();
     })
     .catch(err => {
       console.error("Erro ao enviar: ", err);
@@ -262,15 +459,14 @@ rsvpForm.addEventListener("submit", (e) => {
     });
 
   } else {
-    // Caso de teste/fallback local
+    // Fallback local (localStorage)
     let currentRSVPs = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
     rsvpData.id = Date.now();
     currentRSVPs.push(rsvpData);
     localStorage.setItem("wedding_rsvps", JSON.stringify(currentRSVPs));
 
     showRsvpSuccess(name, attendance);
-    rsvpForm.reset();
-    companionsGroup.style.display = "block";
+    resetRsvpForm();
   }
 });
 
@@ -281,6 +477,28 @@ function showRsvpSuccess(name, attendance) {
   
   alert(template.replace("{name}", name));
 }
+
+function resetRsvpForm() {
+  rsvpForm.reset();
+  inputName.readOnly = false;
+  btnSearchInvite.style.display = "flex";
+  rsvpFields.style.display = "none";
+  validationMsg.innerHTML = "";
+  validatedGuestName = "";
+  validatedLimit = 0;
+  companionNamesContainer.innerHTML = "";
+}
+
+// Auto-busca via parâmetro na URL (?g=Brixius ou ?convidado=Brixius)
+window.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const guestParam = urlParams.get("g") || urlParams.get("convidado") || urlParams.get("guest");
+  
+  if (guestParam) {
+    inputName.value = decodeURIComponent(guestParam);
+    searchInvitation();
+  }
+});
 
 // =========================================
 // 5. PAINEL ADMINISTRATIVO LOCAL (TESTES)
@@ -357,7 +575,7 @@ function renderGuestList() {
     row.innerHTML = `
       <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(rsvp.name)}</td>
       <td><span style="color:${rsvp.attendance === 'Confirmado' ? '#4ade80' : '#f87171'};">${rsvp.attendance}</span></td>
-      <td style="text-align:center;">${rsvp.companions}</td>
+      <td style="text-align:center;">${rsvp.companions} ${rsvp.companionNames ? `(${escapeHTML(rsvp.companionNames)})` : ''}</td>
       <td><a href="https://wa.me/55${rsvp.whatsapp.replace(/\D/g, '')}" target="_blank" style="color:var(--gold); text-decoration:none;">${escapeHTML(rsvp.whatsapp)}</a></td>
       <td>${escapeHTML(rsvp.email)}</td>
       <td style="font-size:0.95rem; font-style:italic; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHTML(rsvp.message)}">${escapeHTML(rsvp.message) || '-'}</td>
@@ -388,13 +606,14 @@ btnExportCsv.addEventListener("click", () => {
     return;
   }
 
-  let csvContent = "\uFEFFNome;Presenca;Acompanhantes;WhatsApp;Email;Mensagem;DataConfirmacao\n";
+  let csvContent = "\uFEFFNome;Presenca;Acompanhantes;NomesAcompanhantes;WhatsApp;Email;Mensagem;DataConfirmacao\n";
   rsvps.forEach(rsvp => {
     const name = rsvp.name.replace(/;/g, ",");
     const email = rsvp.email.replace(/;/g, ",");
     const whatsapp = rsvp.whatsapp.replace(/;/g, ",");
+    const compsNames = (rsvp.companionNames || "").replace(/;/g, ",");
     const msg = (rsvp.message || "").replace(/;/g, ",").replace(/\n/g, " ");
-    csvContent += `"${name}";"${rsvp.attendance}";${rsvp.companions};"${whatsapp}";"${email}";"${msg}";"${rsvp.date}"\n`;
+    csvContent += `"${name}";"${rsvp.attendance}";${rsvp.companions};"${compsNames}";"${whatsapp}";"${email}";"${msg}";"${rsvp.date}"\n`;
   });
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -425,3 +644,37 @@ window.addEventListener("click", (e) => {
     adminModal.classList.remove("active");
   }
 });
+
+/*
+=================================================================================
+CÓDIGO ATUALIZADO DO GOOGLE APPS SCRIPT (ADICIONADA A COLUNA DE NOMES DE ACOMPANHANTES)
+=================================================================================
+
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // Insere os dados na planilha como uma nova linha (8 colunas)
+    sheet.appendRow([
+      data.name,
+      data.email,
+      data.whatsapp,
+      data.attendance,
+      data.companions,
+      data.companionNames || "", // Nova coluna!
+      data.message,
+      data.date || new Date().toLocaleString("pt-BR")
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+      
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+  }
+}
+*/

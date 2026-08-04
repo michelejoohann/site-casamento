@@ -452,84 +452,78 @@
             <span class="lang-pt">Seu Nome Completo</span>
             <span class="lang-en">Your Full Name</span>
           </label>
-          <input type="text" id="name" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <label for="whatsapp">
-            <span class="lang-pt">WhatsApp / Celular</span>
-            <span class="lang-en">WhatsApp / Phone Number</span>
-          </label>
-          <input type="tel" id="whatsapp" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <label>
-            <span class="lang-pt">Você comparecerá ao evento?</span>
-            <span class="lang-en">Will you attend the event?</span>
-          </label>
-          <div class="radio-group">
-            <label class="radio-option">
-              <input type="radio" name="attendance" value="Confirmado" checked>
-              <span class="radio-checkmark"></span>
-              <span class="lang-pt">Com certeza!</span>
-              <span class="lang-en">Yes, absolutely!</span>
-            </label>
-            <label class="radio-option">
-              <input type="radio" name="attendance" value="Ausente">
-              <span class="radio-checkmark"></span>
-              <span class="lang-pt">Infelizmente não poderei ir.</span>
-              <span class="lang-en">Unfortunately, I cannot attend.</span>
-            </label>
+          <div style="display: flex; gap: 0.8rem; align-items: stretch;">
+            <input type="text" id="name" class="form-control" style="flex-grow: 1;" required>
+            <button type="button" class="btn-elf" id="btn-search-invite" style="margin-top: 0; padding: 0.8rem 1.5rem; white-space: nowrap; display: flex; align-items: center; justify-content: center; height: 100%;">
+              <span class="lang-pt">Buscar</span>
+              <span class="lang-en">Search</span>
+            </button>
           </div>
+          <div id="validation-msg" style="margin-top: 0.5rem; font-size: 1.05rem; font-weight: 600; text-align: left;"></div>
         </div>
 
-        <div class="form-group" id="companions-group">
-          <label for="companions">
-            <span class="lang-pt">Quantidade de Acompanhantes</span>
-            <span class="lang-en">Number of Companions</span>
-          </label>
-          <select id="companions" class="form-control">
-            <option value="0">
-              <span class="lang-pt">Apenas eu (0 acompanhantes)</span>
-              <span class="lang-en">Just me (0 companions)</span>
-            </option>
-            <option value="1">
-              <span class="lang-pt">1 acompanhante</span>
-              <span class="lang-en">1 companion</span>
-            </option>
-            <option value="2">
-              <span class="lang-pt">2 acompanhantes</span>
-              <span class="lang-en">2 companions</span>
-            </option>
-            <option value="3">
-              <span class="lang-pt">3 acompanhantes</span>
-              <span class="lang-en">3 companions</span>
-            </option>
-            <option value="4">
-              <span class="lang-pt">4 acompanhantes</span>
-              <span class="lang-en">4 companions</span>
-            </option>
-          </select>
-        </div>
+        <!-- Campos do RSVP (Inicialmente Ocultos até a validação) -->
+        <div id="rsvp-fields" style="display: none; animation: fadeIn 0.5s ease;">
+          <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" class="form-control" required>
+          </div>
 
-        <div class="form-group">
-          <label for="message">
-            <span class="lang-pt">Mensagem para os Noivos (Restrição alimentar, recados, etc.)</span>
-            <span class="lang-en">Message to the Couple (Dietary restrictions, wishes, etc.)</span>
-          </label>
-          <textarea id="message" class="form-control" rows="4"></textarea>
-        </div>
+          <div class="form-group">
+            <label for="whatsapp">
+              <span class="lang-pt">WhatsApp / Celular</span>
+              <span class="lang-en">WhatsApp / Phone Number</span>
+            </label>
+            <input type="tel" id="whatsapp" class="form-control" required>
+          </div>
 
-        <button type="submit" class="btn-submit" id="btn-submit-rsvp">
-          <span class="lang-pt">Enviar Confirmação</span>
-          <span class="lang-en">Send RSVP</span>
-        </button>
+          <div class="form-group">
+            <label>
+              <span class="lang-pt">Você comparecerá ao evento?</span>
+              <span class="lang-en">Will you attend the event?</span>
+            </label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="attendance" value="Confirmado" checked>
+                <span class="radio-checkmark"></span>
+                <span class="lang-pt">Com certeza!</span>
+                <span class="lang-en">Yes, absolutely!</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="attendance" value="Ausente">
+                <span class="radio-checkmark"></span>
+                <span class="lang-pt">Infelizmente não poderei ir.</span>
+                <span class="lang-en">Unfortunately, I cannot attend.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="companions-group">
+            <label for="companions">
+              <span class="lang-pt">Quantidade de Acompanhantes</span>
+              <span class="lang-en">Number of Companions</span>
+            </label>
+            <select id="companions" class="form-control">
+              <!-- As opções serão preenchidas dinamicamente via JS com base no limite do convite -->
+            </select>
+            
+            <!-- Container para digitação dos nomes dos acompanhantes -->
+            <div id="companion-names-container" style="margin-top: 1.2rem;"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">
+              <span class="lang-pt">Mensagem para os Noivos (Restrição alimentar, recados, etc.)</span>
+              <span class="lang-en">Message to the Couple (Dietary restrictions, wishes, etc.)</span>
+            </label>
+            <textarea id="message" class="form-control" rows="4"></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit-rsvp">
+            <span class="lang-pt">Enviar Confirmação</span>
+            <span class="lang-en">Send RSVP</span>
+          </button>
+        </div>
       </form>
     </div>
   </section>

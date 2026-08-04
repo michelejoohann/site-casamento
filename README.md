@@ -29,8 +29,9 @@ Para coletar as confirmações de presença dos convidados de forma privada e 10
    * Coluna C: **WhatsApp**
    * Coluna D: **Presença**
    * Coluna E: **Acompanhantes**
-   * Coluna F: **Mensagem**
-   * Coluna G: **Data de Confirmação**
+   * Coluna F: **Nomes dos Acompanhantes**
+   * Coluna G: **Mensagem**
+   * Coluna H: **Data de Confirmação**
 
 ### Passo 2: Adicionar o Código de Integração
 1. No menu superior da planilha, clique em **Extensões** (Extensions) e depois em **Apps Script**.
@@ -42,13 +43,14 @@ function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = JSON.parse(e.postData.contents);
     
-    // Insere os dados na planilha como uma nova linha
+    // Insere os dados na planilha como uma nova linha (8 colunas)
     sheet.appendRow([
       data.name,
       data.email,
       data.whatsapp,
       data.attendance,
       data.companions,
+      data.companionNames || "", // Nova coluna!
       data.message,
       data.date || new Date().toLocaleString("pt-BR")
     ]);
