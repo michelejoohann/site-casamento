@@ -28,8 +28,8 @@ Para coletar as confirmações de presença dos convidados de forma privada e 10
    * Coluna B: **E-mail**
    * Coluna C: **WhatsApp**
    * Coluna D: **Presença**
-   * Coluna E: **Acompanhantes**
-   * Coluna F: **Nomes dos Acompanhantes**
+   * Coluna E: **Total Confirmados**
+   * Coluna F: **Nomes dos Confirmados**
    * Coluna G: **Mensagem**
    * Coluna H: **Data de Confirmação**
 

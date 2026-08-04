@@ -565,34 +565,40 @@ rsvpForm.addEventListener("submit", (e) => {
   const whatsapp = document.getElementById("whatsapp").value.trim();
   let attendance = document.querySelector('input[name="attendance"]:checked').value;
   
-  let companionsCount = 0;
-  let companionNames = "";
+  let totalConfirmed = 0;
+  let namesConfirmed = "";
   
-  if (attendance === "Confirmado" && validatedLimit > 0) {
-    const slotRows = document.querySelectorAll(".guest-slot-row");
-    const confirmedNames = [];
-    
-    slotRows.forEach(slot => {
-      const select = slot.querySelector(".guest-slot-select");
-      const textInput = slot.querySelector(".guest-slot-name-input");
-      const selectVal = select.value;
+  if (attendance === "Confirmado") {
+    if (validatedLimit > 0) {
+      const slotRows = document.querySelectorAll(".guest-slot-row");
+      const confirmedNames = [];
       
-      if (selectVal && selectVal !== "Ausente") {
-        if (selectVal === "Acompanhante") {
-          const typedName = textInput.value.trim();
-          if (typedName) confirmedNames.push(typedName);
-        } else {
-          confirmedNames.push(selectVal);
+      slotRows.forEach(slot => {
+        const select = slot.querySelector(".guest-slot-select");
+        const textInput = slot.querySelector(".guest-slot-name-input");
+        const selectVal = select.value;
+        
+        if (selectVal && selectVal !== "Ausente") {
+          if (selectVal === "Acompanhante") {
+            const typedName = textInput.value.trim();
+            if (typedName) confirmedNames.push(typedName);
+          } else {
+            confirmedNames.push(selectVal);
+          }
         }
+      });
+      
+      if (confirmedNames.length > 0) {
+        totalConfirmed = confirmedNames.length;
+        namesConfirmed = confirmedNames.join(", ");
+      } else {
+        // Se todos os slots do convite familiar forem ausentes, a presença geral é Ausente
+        attendance = "Ausente";
       }
-    });
-    
-    if (confirmedNames.length > 0) {
-      companionsCount = confirmedNames.length - 1;
-      companionNames = confirmedNames.slice(1).join(", ");
     } else {
-      // Se todos os slots do convite familiar forem ausentes, a presença geral é Ausente
-      attendance = "Ausente";
+      // Convite individual
+      totalConfirmed = 1;
+      namesConfirmed = name;
     }
   }
 
@@ -601,8 +607,8 @@ rsvpForm.addEventListener("submit", (e) => {
     email,
     whatsapp,
     attendance,
-    companions: companionsCount,
-    companionNames: companionNames || "", // Enviado ao Google Sheets
+    companions: totalConfirmed,
+    companionNames: namesConfirmed || "", // Enviado ao Google Sheets
     message: document.getElementById("message").value.trim(),
     date: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR")
   };
@@ -786,7 +792,7 @@ btnExportCsv.addEventListener("click", () => {
     return;
   }
 
-  let csvContent = "\uFEFFNome;Presenca;Acompanhantes;NomesAcompanhantes;WhatsApp;Email;Mensagem;DataConfirmacao\n";
+  let csvContent = "\uFEFFNome;Presenca;TotalConfirmados;NomesConfirmados;WhatsApp;Email;Mensagem;DataConfirmacao\n";
   rsvps.forEach(rsvp => {
     const name = rsvp.name.replace(/;/g, ",");
     const email = rsvp.email.replace(/;/g, ",");
