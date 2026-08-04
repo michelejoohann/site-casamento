@@ -121,6 +121,20 @@ function setLanguage(lang) {
     btnSubmit.querySelector("span.lang-en").textContent = translations.en.submitBtn;
   }
   
+  // Atualiza as opções do dropdown de acompanhantes no idioma correto se o convite já foi buscado
+  if (validatedGuestName) {
+    const currentSelectedVal = companionsSelect.value;
+    const currentCompanionNames = Array.from(document.querySelectorAll(".companion-name-input")).map(inp => inp.value);
+    buildCompanionsDropdown(validatedLimit);
+    companionsSelect.value = currentSelectedVal;
+    
+    // Recria os inputs e recoloca os valores
+    companionsSelect.dispatchEvent(new Event("change"));
+    document.querySelectorAll(".companion-name-input").forEach((inp, idx) => {
+      if (currentCompanionNames[idx]) inp.value = currentCompanionNames[idx];
+    });
+  }
+  
   // Atualiza os placeholders dos inputs de acompanhantes se estiverem visíveis
   document.querySelectorAll(".companion-name-input").forEach((input, index) => {
     input.placeholder = translations[lang].companionPlaceholder;
@@ -321,10 +335,7 @@ function buildCompanionsDropdown(limit) {
   // Opção: Apenas eu
   const opt0 = document.createElement("option");
   opt0.value = "0";
-  opt0.innerHTML = `
-    <span class="lang-pt">${translations.pt.companionsOptions.justMe}</span>
-    <span class="lang-en">${translations.en.companionsOptions.justMe}</span>
-  `;
+  opt0.textContent = translations[currentLanguage].companionsOptions.justMe;
   companionsSelect.appendChild(opt0);
 
   // Adiciona opções até o limite máximo do convite
@@ -332,15 +343,9 @@ function buildCompanionsDropdown(limit) {
     const opt = document.createElement("option");
     opt.value = i;
     if (i === 1) {
-      opt.innerHTML = `
-        <span class="lang-pt">${translations.pt.companionsOptions.one}</span>
-        <span class="lang-en">${translations.en.companionsOptions.one}</span>
-      `;
+      opt.textContent = translations[currentLanguage].companionsOptions.one;
     } else {
-      opt.innerHTML = `
-        <span class="lang-pt">${translations.pt.companionsOptions.multiple.replace("{num}", i)}</span>
-        <span class="lang-en">${translations.en.companionsOptions.multiple.replace("{num}", i)}</span>
-      `;
+      opt.textContent = translations[currentLanguage].companionsOptions.multiple.replace("{num}", i);
     }
     companionsSelect.appendChild(opt);
   }

@@ -565,6 +565,11 @@ p {
   transition: var(--transition-smooth);
 }
 
+.form-control option {
+  background-color: #0c1e15;
+  color: var(--text-light);
+}
+
 .form-control:focus {
   outline: none;
   border-color: var(--gold);
