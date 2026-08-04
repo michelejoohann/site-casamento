@@ -1,6 +1,6 @@
-# 🌿 Site de Casamento Élfico — Fabio & Michele
+# 🌿 Site de Casamento Élfico — Michele & Fabio
 
-Este é o site de casamento de **Fabio e Michele**, inspirado no conto de **Beren e Lúthien** de J.R.R. Tolkien. 
+Este é o site de casamento de **Michele e Fabio**, inspirado no conto de **Beren e Lúthien** de J.R.R. Tolkien. 
 
 Ele conta com uma estética élfica mágica, contagem regressiva ativa para o dia **21/09/2027**, história do casal, lista de presentes virtuais (cotas com PIX) e formulário de confirmação de presença (RSVP) integrado a uma planilha privada do Google.
 
