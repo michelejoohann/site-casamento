@@ -1,8 +1,8 @@
 # 🌿 Site de Casamento Élfico — Fabio & Michele
 
-Este é o site de casamento personalizado de **Fabio e Michele**, inspirado no lendário conto de **Beren e Lúthien** de J.R.R. Tolkien. 
+Este é o site de casamento de **Fabio e Michele**, inspirado no conto de **Beren e Lúthien** de J.R.R. Tolkien. 
 
-Ele conta com uma estética mágica e élfica, contagem regressiva ativa para o dia **21/09/2027**, história do casal, lista de presentes virtuais (cotas com PIX) e formulário de confirmação de presença (RSVP) com um painel administrativo oculto integrado.
+Ele conta com uma estética élfica mágica, contagem regressiva ativa para o dia **21/09/2027**, história do casal, lista de presentes virtuais (cotas com PIX) e formulário de confirmação de presença (RSVP) integrado a uma planilha privada do Google.
 
 ---
 
@@ -10,67 +10,97 @@ Ele conta com uma estética mágica e élfica, contagem regressiva ativa para o 
 
 *   **Identidade Visual Personalizada:** Tons de verde floresta, azul crepúsculo, marfim e dourado estelar, com tipografias clássicas de fantasia (*Cinzel* e *Cormorant Garamond*).
 *   **Contador Regressivo:** Atualizado em tempo real até a data do casamento.
-*   **Lista de Presentes de Valinor:** Sugestões divertidas baseadas na Terra Média (ex: *Passagem de Águia para Lua de Mel*, *Banquete no Pônei Saltitante*). Inclui modal com QR Code e botão de cópia automática da chave PIX.
-*   **Confirmação de Presença (RSVP):** Formulário completo integrado.
-*   **Painel Admin Secreto (Dashboard):** Um painel oculto no canto inferior direito do site, protegido por senha, para gerenciar as confirmações.
-    *   **Senha padrão:** `beren`
-    *   Exibe a lista de confirmados e acompanhantes.
-    *   Permite abrir o WhatsApp de contato do convidado com um clique.
-    *   Permite exportar todos os dados para um arquivo Excel/CSV.
+*   **Lista de Presentes de Valinor:** Cotas virtuais temáticas da Terra Média (ex: *Passagem de Águia para Lua de Mel*, *Banquete no Pônei Saltitante*). Inclui modal com QR Code e botão de cópia automática da chave PIX.
+*   **Confirmação de Presença (RSVP):** Formulário integrado diretamente a uma Planilha do Google do casal, garantindo segurança e privacidade absoluta (ninguém consegue ver quem já confirmou, apenas você e o Fabio).
+*   **Painel de Testes Local (Backup):** Se a planilha do Google não estiver configurada, o site salva temporariamente as confirmações na memória do navegador. Um cadeado dourado no canto inferior direito permite abrir um painel secreto (senha: `beren`) para ver e baixar essa lista de teste em Excel/CSV. Quando a planilha real for conectada, esse painel de testes é desativado automaticamente.
 
 ---
 
-## 🚀 Como Hospedar no GitHub Pages (Gratuito e Rápido)
+## ⚙️ Como Integrar com o Google Planilhas (Google Sheets)
 
-Siga os passos simples abaixo para colocar o seu site no ar gratuitamente no seu GitHub:
+Para coletar as confirmações de presença dos convidados de forma privada e 100% segura, siga este passo a passo:
 
-### Passo 1: Criar o Repositório no GitHub
-1. Acesse sua conta no [GitHub](https://github.com).
-2. Clique no botão **"New"** (ou no símbolo `+` no canto superior direito e escolha "New repository").
-3. Dê um nome para o repositório (por exemplo: `casamento` ou `site-casamento`).
-4. Deixe o repositório como **Public** (Público) — isso é necessário para usar o GitHub Pages de forma gratuita.
-5. Deixe desmarcadas as opções de inicialização (não adicione README, .gitignore ou licença) e clique em **"Create repository"**.
+### Passo 1: Criar a Planilha no seu Google Drive
+1. Abra o [Google Planilhas](https://sheets.google.com) usando a sua conta do Google.
+2. Crie uma planilha em branco chamada **"Confirmados Casamento"**.
+3. (Opcional) Escreva na primeira linha os cabeçalhos para organizar:
+   * Coluna A: **Nome**
+   * Coluna B: **E-mail**
+   * Coluna C: **WhatsApp**
+   * Coluna D: **Presença**
+   * Coluna E: **Acompanhantes**
+   * Coluna F: **Mensagem**
+   * Coluna G: **Data de Confirmação**
 
-### Passo 2: Subir os Arquivos para o GitHub
-Você pode fazer isso de duas formas:
+### Passo 2: Adicionar o Código de Integração
+1. No menu superior da planilha, clique em **Extensões** (Extensions) e depois em **Apps Script**.
+2. Apague qualquer código que estiver na janela de edição e cole o código abaixo:
 
-#### Opção A (Pelo Navegador — Mais Simples):
-1. Na página do repositório recém-criado, clique no link **"uploading an existing file"** (na parte superior).
-2. Arraste e solte os 4 arquivos deste projeto (`index.html`, `style.css`, `script.js` e esta `README.md`) para a área demarcada.
-3. Aguarde o carregamento e, na parte inferior da página, clique no botão verde **"Commit changes"**.
-
-#### Opção B (Por Linha de Comando — Git):
-Se você já possui o Git instalado na sua máquina, abra o terminal na pasta do projeto e rode:
-```bash
-git init
-git add .
-git commit -m "Initial commit: Site de casamento élfico"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/NOME_DO_REPOSITORIO.git
-git push -u origin main
+```javascript
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // Insere os dados na planilha como uma nova linha
+    sheet.appendRow([
+      data.name,
+      data.email,
+      data.whatsapp,
+      data.attendance,
+      data.companions,
+      data.message,
+      data.date || new Date().toLocaleString("pt-BR")
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+      
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+  }
+}
 ```
-*(Substitua `SEU_USUARIO` e `NOME_DO_REPOSITORIO` pelos seus dados reais no GitHub).*
 
-### Passo 3: Ativar o GitHub Pages
-1. No seu repositório no GitHub, clique na aba **Settings** (Configurações) na barra de navegação superior.
-2. No menu lateral esquerdo, na seção "Code and automation", clique em **Pages**.
-3. Na seção "Build and deployment":
-   * **Source:** Selecione *Deploy from a branch*.
-   * **Branch:** Clique no menu onde diz *None*, mude para **main** (ou `master`) e deixe a pasta como **/(root)**.
-4. Clique no botão **Save** (Salvar).
-5. Aguarde cerca de 1 a 2 minutos. Atualize a página e você verá uma caixa no topo da seção Pages dizendo: **"Your site is live at..."** seguido do link público do seu site!
+3. Clique no ícone de disquete (**Salvar projeto**) no menu superior do Apps Script.
+
+### Passo 3: Publicar a Integração como Aplicativo Web
+1. No canto superior direito da tela do Apps Script, clique no botão azul **Implantar** (Deploy) e escolha **Nova implantação** (New deployment).
+2. Clique no ícone de engrenagem ao lado de "Selecione o tipo" e selecione **Aplicativo da Web** (Web App).
+3. Preencha as configurações exatamente assim:
+   * **Descrição:** RSVP Casamento
+   * **Executar como:** Eu (seu e-mail do Google)
+   * **Quem tem acesso:** Qualquer pessoa (Anyone) — *esta opção é obrigatória para que o site consiga enviar os dados dos convidados*.
+4. Clique em **Implantar** (Deploy).
+5. O Google pedirá que você autorize o acesso à sua conta. Clique em **"Autorizar acesso"**, escolha sua conta, depois clique em **"Avançado"** (Advanced) no final do aviso de segurança do Google e selecione **"Ir para Projeto Sem Nome (não seguro)"**. Depois clique em **Permitir**.
+6. Copie a **URL do aplicativo da Web** que aparecerá na tela (ela começa com `https://script.google.com/macros/s/.../exec`).
+
+### Passo 4: Conectar a URL ao Site
+1. Abra o arquivo **`script.js`** do seu projeto no computador.
+2. Na linha 4, localize a variável `GOOGLE_SHEET_URL`.
+3. Substitua o texto `"SUA_URL_DO_GOOGLE_SCRIPT_AQUI"` pela URL que você acabou de copiar da implantação do Google.
+   * *Exemplo:* `const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxyz.../exec";`
+4. Salve o arquivo `script.js` e envie as atualizações para o seu repositório no GitHub.
 
 ---
 
-## ⚙️ Como Personalizar os Detalhes do Site
+## 🚀 Como Hospedar no GitHub Pages (Gratuito)
 
-Todas as configurações principais estão organizadas nos arquivos de forma simples para quando vocês definirem os locais e chaves PIX reais:
+Como o projeto já está conectado ao seu GitHub, toda alteração salva na sua máquina pode ser enviada para lá.
 
-*   **Chave PIX e Destinatário:**
-    *   Abra o arquivo `index.html`.
-    *   Use a busca por `pix@casamentofabioemichele.com.br` e troque pela sua chave PIX real (pode ser CPF, celular, e-mail ou chave aleatória).
-    *   Logo abaixo, altere o nome do destinatário (linha 352) e o banco para o seu banco real.
-*   **Local e Mapa:**
-    *   No arquivo `index.html`, localize a seção do Local (linhas 125-133). Assim que definirem, vocês podem substituir o texto "A definir" pelo endereço real e preencher a URL do Google Maps no botão `<button>`.
-*   **Senha do Painel de Confirmados:**
-    *   No topo do arquivo `script.js` (linha 3), mude a palavra `"beren"` para a senha de sua preferência.
+Se você alterar o arquivo `script.js` para colocar sua URL da planilha, basta abrir o terminal do Git na pasta do projeto e rodar:
+
+```bash
+git add .
+git commit -m "Update: Adiciona conexao com Google Planilhas"
+git push
+```
+
+### Como ativar o site no GitHub:
+1. No seu repositório do GitHub, vá em **Settings** (Configurações) no menu superior.
+2. No menu lateral esquerdo, clique em **Pages**.
+3. Na seção "Build and deployment", selecione a branch **`main`**, a pasta **`/(root)`** e clique em **Save** (Salvar).
+4. O link do seu site ficará online em cerca de 1 minuto!

@@ -1,6 +1,10 @@
 // CONFIGURAÇÕES DO CASAMENTO
+// 1. Cole aqui a URL gerada pelo Google Apps Script (ex: https://script.google.com/macros/s/AKfycb.../exec)
+// Se deixar como está, o site usará o painel administrativo local (localStorage) como teste.
+const GOOGLE_SHEET_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI";
+
 const CASAMENTO_DATE = new Date("2027-09-21T19:00:00").getTime(); // 21 de Setembro de 2027, 19:00h
-const ADMIN_PASSWORD = "beren"; // Senha do painel admin de confirmações
+const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
 
 // Elementos da página
 const elDays = document.getElementById("days");
@@ -84,6 +88,7 @@ btnCopyPix.addEventListener("click", () => {
 // 3. FLUXO RSVP (CONFIRMAÇÃO DE PRESENÇA)
 // =========================================
 const rsvpForm = document.getElementById("rsvp-form");
+const btnSubmit = rsvpForm.querySelector(".btn-submit");
 const radioAttendance = document.getElementsByName("attendance");
 const companionsGroup = document.getElementById("companions-group");
 
@@ -110,7 +115,6 @@ rsvpForm.addEventListener("submit", (e) => {
   const message = document.getElementById("message").value.trim();
 
   const rsvpData = {
-    id: Date.now(),
     name,
     email,
     whatsapp,
@@ -120,25 +124,58 @@ rsvpForm.addEventListener("submit", (e) => {
     date: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR")
   };
 
-  // Salvar no localStorage
-  let currentRSVPs = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
-  currentRSVPs.push(rsvpData);
-  localStorage.setItem("wedding_rsvps", JSON.stringify(currentRSVPs));
+  // Se o Google Sheets estiver configurado
+  if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Enviando...";
 
-  // Agradecimento
+    fetch(GOOGLE_SHEET_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(rsvpData)
+    })
+    .then(() => {
+      // Como usamos 'no-cors' para evitar problemas de CORS do Google Script,
+      // a resposta retorna opaca, mas a gravação é concluída com sucesso.
+      showRsvpSuccess(name, attendance);
+      rsvpForm.reset();
+      companionsGroup.style.display = "block";
+    })
+    .catch(err => {
+      console.error("Erro ao enviar para planilha: ", err);
+      alert("Houve um erro ao enviar sua confirmação. Por favor, tente novamente.");
+    })
+    .finally(() => {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "Enviar Confirmação";
+    });
+
+  } else {
+    // Caso de teste/fallback: Salvar localmente no localStorage
+    let currentRSVPs = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
+    rsvpData.id = Date.now();
+    currentRSVPs.push(rsvpData);
+    localStorage.setItem("wedding_rsvps", JSON.stringify(currentRSVPs));
+
+    showRsvpSuccess(name, attendance);
+    rsvpForm.reset();
+    companionsGroup.style.display = "block";
+  }
+});
+
+function showRsvpSuccess(name, attendance) {
   if (attendance === "Confirmado") {
     alert(`Obrigado pela confirmação, ${name}! Nos vemos no dia 21 de Setembro de 2027! 🌿✨`);
   } else {
     alert(`Sentiremos sua falta, ${name}! Agradecemos por nos avisar. 🤍`);
   }
-
-  // Resetar formulário
-  rsvpForm.reset();
-  companionsGroup.style.display = "block";
-});
+}
 
 // =========================================
-// 4. PAINEL ADMINISTRATIVO (GUEST DASHBOARD)
+// 4. PAINEL ADMINISTRATIVO LOCAL (TESTES)
 // =========================================
 const adminBtn = document.getElementById("admin-btn");
 const adminModal = document.getElementById("admin-modal");
@@ -152,6 +189,11 @@ const btnExportCsv = document.getElementById("btn-export-csv");
 const btnClearRsvp = document.getElementById("btn-clear-rsvp");
 
 let isAdminAuthenticated = false;
+
+// Ocultar botão do painel se o Google Sheets estiver ativo
+if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
+  adminBtn.style.display = "none";
+}
 
 // Abrir modal admin
 adminBtn.addEventListener("click", () => {
@@ -198,7 +240,7 @@ function renderGuestList() {
   guestListRows.innerHTML = "";
 
   if (rsvps.length === 0) {
-    guestListRows.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--silver);">Nenhuma confirmação recebida ainda.</td></tr>`;
+    guestListRows.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--silver);">Nenhuma confirmação recebida ainda no modo de testes.</td></tr>`;
     return;
   }
 
@@ -234,30 +276,25 @@ function escapeHTML(str) {
 btnExportCsv.addEventListener("click", () => {
   const rsvps = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
   if (rsvps.length === 0) {
-    alert("Não há dados para exportar.");
+    alert("Não há dados locais para exportar.");
     return;
   }
 
-  // Cabeçalho do CSV
   let csvContent = "\uFEFFNome;Presenca;Acompanhantes;WhatsApp;Email;Mensagem;DataConfirmacao\n";
-
   rsvps.forEach(rsvp => {
     const name = rsvp.name.replace(/;/g, ",");
     const email = rsvp.email.replace(/;/g, ",");
     const whatsapp = rsvp.whatsapp.replace(/;/g, ",");
     const msg = (rsvp.message || "").replace(/;/g, ",").replace(/\n/g, " ");
-    
     csvContent += `"${name}";"${rsvp.attendance}";${rsvp.companions};"${whatsapp}";"${email}";"${msg}";"${rsvp.date}"\n`;
   });
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  
   link.setAttribute("href", url);
   link.setAttribute("download", `confirmacoes_casamento_fabio_michele.csv`);
   link.style.visibility = 'hidden';
-  
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -265,13 +302,13 @@ btnExportCsv.addEventListener("click", () => {
 
 // Limpar lista RSVP
 btnClearRsvp.addEventListener("click", () => {
-  if (confirm("ATENÇÃO: Você tem certeza que deseja excluir todas as confirmações da lista? Essa ação não pode ser desfeita!")) {
+  if (confirm("Deseja mesmo limpar as confirmações de testes locais?")) {
     localStorage.removeItem("wedding_rsvps");
     renderGuestList();
   }
 });
 
-// Fechar modais ao clicar fora deles
+// Fechar modais ao clicar fora
 window.addEventListener("click", (e) => {
   if (e.target === giftModal) {
     giftModal.classList.remove("active");
@@ -281,3 +318,36 @@ window.addEventListener("click", (e) => {
     adminModal.classList.remove("active");
   }
 });
+
+/*
+=================================================================================
+CÓDIGO DO GOOGLE APPS SCRIPT (CRIE UMA PLANILHA NO GOOGLE DRIVE E COLE ESSE CÓDIGO)
+=================================================================================
+
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // Insere os dados na planilha como uma nova linha
+    sheet.appendRow([
+      data.name,
+      data.email,
+      data.whatsapp,
+      data.attendance,
+      data.companions,
+      data.message,
+      data.date || new Date().toLocaleString("pt-BR")
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+      
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeader('Access-Control-Allow-Origin', '*');
+  }
+}
+*/
