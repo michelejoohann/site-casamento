@@ -180,6 +180,8 @@ p {
   margin-bottom: 1rem;
   animation: fadeInUp 1.5s ease;
   line-height: 1.2;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0;
 }
 
 .hero-date {
@@ -888,6 +890,8 @@ footer {
   color: var(--gold);
   margin-bottom: 1rem;
   display: block;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0;
 }
 
 .footer-quote {
