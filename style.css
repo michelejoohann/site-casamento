@@ -425,7 +425,8 @@ p {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  height: 350px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border: 1px solid rgba(212, 175, 55, 0.2);
   cursor: pointer;
 }
