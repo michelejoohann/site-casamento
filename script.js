@@ -69,6 +69,7 @@ const translations = {
     searchSuccessIndividual: "Olá, {name}! Convite localizado. Confirme sua presença.",
     searchTooShort: "Por favor, digite pelo menos 3 letras para realizar a busca.",
     searchAlreadyConfirmed: "⚠️ Atenção: Este convite já foi confirmado anteriormente. Se você enviar novamente, os novos dados substituirão os anteriores.",
+    searchError: "Não encontramos esse nome em nossa lista de convidados. Por favor, verifique a grafia ou tente buscar pelo nome principal do convite de sua família. Se precisar de ajuda, fale com os noivos! 🌿",
     companionLabel: "Nome do Acompanhante {num}",
     companionPlaceholder: "Nome completo do acompanhante",
     companionsOptions: {
@@ -95,6 +96,7 @@ const translations = {
     searchSuccessIndividual: "Hello, {name}! Invitation found. Please confirm your attendance.",
     searchTooShort: "Please type at least 3 letters to search.",
     searchAlreadyConfirmed: "⚠️ Notice: This invitation has already been confirmed. Submitting again will overwrite the previous confirmation.",
+    searchError: "We couldn't find this name in our guest list. Please check the spelling or try searching by the primary name on your family's invitation. If you need help, please contact the couple! 🌿",
     companionLabel: "Companion {num} Name",
     companionPlaceholder: "Companion's full name",
     companionsOptions: {
