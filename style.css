@@ -30,7 +30,9 @@ html {
 }
 
 body {
-  background-color: var(--bg-dark);
+  background-color: #040c09;
+  background-image: radial-gradient(circle at center, #0c2b1f 0%, #040c09 70%);
+  background-attachment: fixed;
   color: var(--text-light);
   font-family: var(--font-body);
   font-size: 1.25rem;
@@ -108,14 +110,18 @@ p {
 
 .elven-divider-icon {
   color: var(--gold);
-  font-size: 1.5rem;
-  margin: 0 1rem;
+  width: 32px;
+  height: 32px;
+  margin: 0 1.2rem;
   display: inline-block;
-  transform: rotate(45deg);
-  border: 1px solid var(--gold);
-  width: 12px;
-  height: 12px;
-  background: var(--bg-dark);
+  transform: none;
+  border: none;
+  background: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23d4af37' stroke-width='2.5'%3E%3Cpath d='M 50,5 C 20,35 20,75 50,95 C 80,75 80,35 50,5 Z' fill='rgba(212, 175, 55, 0.08)'/%3E%3Cpath d='M 50,5 L 50,95'/%3E%3Cpath d='M 50,20 C 35,30 30,45 25,60'/%3E%3Cpath d='M 50,20 C 65,30 70,45 75,60'/%3E%3Cpath d='M 50,40 C 35,50 30,65 35,80'/%3E%3Cpath d='M 50,40 C 65,50 70,65 65,80'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: pulseGold 3s infinite ease-in-out;
 }
 
 /* Estilo para Container Geral */
@@ -252,8 +258,35 @@ p {
 
 .section-title {
   font-size: 2.5rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+  position: relative;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.section-title::before,
+.section-title::after {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  width: 32px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.85;
+}
+
+.section-title::before {
+  margin-right: 1.2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 20' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpath d='M 32,10 C 22,10 15,3 5,3 C 0,3 0,10 10,10 C 15,10 20,7 15,7 M 25,10 C 20,10 18,14 15,14'/%3E%3Ccircle cx='3' cy='10' r='1.5' fill='%23d4af37'/%3E%3C/svg%3E");
+}
+
+.section-title::after {
+  margin-left: 1.2rem;
+  transform: scaleX(-1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 20' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Cpath d='M 32,10 C 22,10 15,3 5,3 C 0,3 0,10 10,10 C 15,10 20,7 15,7 M 25,10 C 20,10 18,14 15,14'/%3E%3Ccircle cx='3' cy='10' r='1.5' fill='%23d4af37'/%3E%3C/svg%3E");
 }
 
 .section-subtitle {
@@ -1199,6 +1232,92 @@ body.lang-pt .lang-en {
   }
   .guest-slot-name-input {
     flex: 1.2;
+  }
+}
+
+/* Efeitos e Detalhes Élficos Extras */
+@keyframes pulseGold {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(212, 175, 55, 0.3));
+    opacity: 0.85;
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.7));
+    opacity: 1;
+  }
+}
+
+/* Decorações de cantos élficos nos cards principais */
+.rsvp-container::before,
+.rsvp-container::after {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 1;
+}
+.rsvp-container::before {
+  top: 15px;
+  left: 15px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5'%3E%3Cpath d='M 2,2 C 12,2 18,8 20,20 C 10,18 4,12 2,2 Z'/%3E%3Cpath d='M 2,2 L 20,20'/%3E%3C/svg%3E");
+}
+.rsvp-container::after {
+  bottom: 15px;
+  right: 15px;
+  transform: scale(-1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5'%3E%3Cpath d='M 2,2 C 12,2 18,8 20,20 C 10,18 4,12 2,2 Z'/%3E%3Cpath d='M 2,2 L 20,20'/%3E%3C/svg%3E");
+}
+
+/* Folhas élficas caindo em segundo plano (Mallorn de Lórien) */
+.falling-leaves {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.falling-leaves .leaf {
+  position: absolute;
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37' opacity='0.35'%3E%3Cpath d='M 12,2 C 16,6 20,12 12,22 C 4,12 8,6 12,2 Z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: fall 13s linear infinite, sway 4.5s ease-in-out infinite alternate;
+}
+
+.falling-leaves .leaf:nth-child(1) { left: 8%; animation-duration: 16s, 4s; animation-delay: 0s, 0s; }
+.falling-leaves .leaf:nth-child(2) { left: 28%; animation-duration: 19s, 5s; animation-delay: 2s, 0.5s; width: 11px; height: 11px; opacity: 0.5; }
+.falling-leaves .leaf:nth-child(3) { left: 52%; animation-duration: 15s, 3.8s; animation-delay: 4s, 1s; }
+.falling-leaves .leaf:nth-child(4) { left: 78%; animation-duration: 21s, 5.5s; animation-delay: 1s, 0.2s; width: 13px; height: 13px; }
+.falling-leaves .leaf:nth-child(5) { left: 92%; animation-duration: 17s, 4.2s; animation-delay: 5s, 1.5s; }
+
+@keyframes fall {
+  0% {
+    top: -25px;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 105vh;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sway {
+  0% {
+    margin-left: 0px;
+  }
+  100% {
+    margin-left: 60px;
   }
 }
 
