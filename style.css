@@ -1321,3 +1321,127 @@ body.lang-pt .lang-en {
   }
 }
 
+/* Player de Áudio Flutuante */
+.audio-player {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.btn-audio {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  color: var(--gold);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: var(--transition-smooth);
+  position: relative;
+  z-index: 101;
+}
+
+.btn-audio:hover {
+  background: var(--gold);
+  color: var(--bg-dark);
+  border-color: var(--gold-light);
+  transform: scale(1.08);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.btn-audio svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s ease;
+}
+
+/* Tooltip de convite auditivo */
+.audio-tooltip {
+  background: rgba(7, 19, 14, 0.9);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-light);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Mostra tooltip quando passa o mouse ou como uma dica inicial */
+.audio-player:hover .audio-tooltip,
+.audio-tooltip.show-hint {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Barras animadas do equalizador */
+.eq-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 20px;
+  height: 18px;
+}
+
+.eq-bar {
+  display: block;
+  width: 3px;
+  height: 100%;
+  background-color: currentColor;
+  border-radius: 1px;
+  animation: bounceBar 0.8s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}
+
+.eq-bar:nth-child(2) {
+  animation-duration: 0.5s;
+  animation-delay: -0.15s;
+}
+
+.eq-bar:nth-child(3) {
+  animation-duration: 0.7s;
+  animation-delay: -0.3s;
+}
+
+@keyframes bounceBar {
+  0% {
+    transform: scaleY(0.25);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  .audio-player {
+    bottom: 1.5rem;
+    left: 1.5rem;
+  }
+  .btn-audio {
+    width: 44px;
+    height: 44px;
+  }
+  .btn-audio svg {
+    width: 18px;
+    height: 18px;
+  }
+  .audio-tooltip {
+    display: none; /* Oculta o texto em celular para não poluir visualmente */
+  }
+}
+

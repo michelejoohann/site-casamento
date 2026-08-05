@@ -861,6 +861,81 @@ window.addEventListener("click", (e) => {
   }
 });
 
+// =========================================
+// 6. CONTROLE DO PLAYER DE ÁUDIO ÉLFICO
+// =========================================
+const btnAudioControl = document.getElementById("btn-audio-control");
+const bgMusic = document.getElementById("bg-music");
+const iconMusic = btnAudioControl.querySelector(".icon-music");
+const eqBars = btnAudioControl.querySelector(".eq-bars");
+const audioTooltip = document.querySelector(".audio-tooltip");
+
+let isMusicPlaying = false;
+
+function toggleAudio() {
+  if (bgMusic.paused) {
+    playMusic();
+  } else {
+    pauseMusic();
+  }
+}
+
+function playMusic() {
+  bgMusic.play().then(() => {
+    isMusicPlaying = true;
+    localStorage.setItem("music-preference", "playing");
+    iconMusic.style.display = "none";
+    eqBars.style.display = "flex";
+    if (audioTooltip) audioTooltip.classList.remove("show-hint");
+  }).catch(err => {
+    console.log("Autoplay block or audio play failed:", err);
+  });
+}
+
+function pauseMusic() {
+  bgMusic.pause();
+  isMusicPlaying = false;
+  localStorage.setItem("music-preference", "paused");
+  iconMusic.style.display = "block";
+  eqBars.style.display = "none";
+}
+
+// Vincula evento de clique ao botão
+btnAudioControl.addEventListener("click", toggleAudio);
+
+// Trata inicialização e preferências de música salvas no navegador
+window.addEventListener("DOMContentLoaded", () => {
+  const musicPref = localStorage.getItem("music-preference");
+  
+  if (musicPref === "playing") {
+    playMusic();
+  } else if (musicPref !== "paused") {
+    // Se for primeira visita, mostra a dica da música por 6 segundos
+    if (audioTooltip) {
+      audioTooltip.classList.add("show-hint");
+      setTimeout(() => {
+        audioTooltip.classList.remove("show-hint");
+      }, 6000);
+    }
+  }
+});
+
+// Tenta tocar na primeira interação com a página (scroll, clique, toque) se não houver bloqueio salvo
+const startAutoplayOnInteraction = () => {
+  const musicPref = localStorage.getItem("music-preference");
+  if (musicPref !== "paused" && !isMusicPlaying) {
+    playMusic();
+  }
+  // Remove ouvintes para executar somente uma vez por recarregamento
+  window.removeEventListener("click", startAutoplayOnInteraction);
+  window.removeEventListener("scroll", startAutoplayOnInteraction);
+  window.removeEventListener("touchstart", startAutoplayOnInteraction);
+};
+
+window.addEventListener("click", startAutoplayOnInteraction);
+window.addEventListener("scroll", startAutoplayOnInteraction);
+window.addEventListener("touchstart", startAutoplayOnInteraction);
+
 /*
 =================================================================================
 CÓDIGO ATUALIZADO DO GOOGLE APPS SCRIPT (COM SOBRESCRITA E SUPORTE A BUSCA GET)
