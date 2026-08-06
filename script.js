@@ -226,6 +226,62 @@ function selectModalTab(tab) {
 tabPixBtn.addEventListener("click", () => selectModalTab("pix"));
 tabIntlBtn.addEventListener("click", () => selectModalTab("international"));
 
+// =========================================
+// 3.5. MODAL DE GUIA DE TRAJES E ABAS
+// =========================================
+const attireModal = document.getElementById("attire-modal");
+const btnOpenAttireModal = document.getElementById("btn-open-attire-modal");
+const closeAttireModal = document.getElementById("close-attire-modal");
+
+const tabFemBtn = document.getElementById("tab-fem-btn");
+const tabMascBtn = document.getElementById("tab-masc-btn");
+const tabClimaBtn = document.getElementById("tab-clima-btn");
+const tabFemContent = document.getElementById("tab-fem-content");
+const tabMascContent = document.getElementById("tab-masc-content");
+const tabClimaContent = document.getElementById("tab-clima-content");
+
+function selectAttireTab(tab) {
+  if (tab === "fem") {
+    tabFemBtn.classList.add("active");
+    tabMascBtn.classList.remove("active");
+    tabClimaBtn.classList.remove("active");
+    tabFemContent.classList.add("active");
+    tabMascContent.classList.remove("active");
+    tabClimaContent.classList.remove("active");
+  } else if (tab === "masc") {
+    tabFemBtn.classList.remove("active");
+    tabMascBtn.classList.add("active");
+    tabClimaBtn.classList.remove("active");
+    tabFemContent.classList.remove("active");
+    tabMascContent.classList.add("active");
+    tabClimaContent.classList.remove("active");
+  } else {
+    tabFemBtn.classList.remove("active");
+    tabMascBtn.classList.remove("active");
+    tabClimaBtn.classList.add("active");
+    tabFemContent.classList.remove("active");
+    tabMascContent.classList.remove("active");
+    tabClimaContent.classList.add("active");
+  }
+}
+
+if (tabFemBtn) tabFemBtn.addEventListener("click", () => selectAttireTab("fem"));
+if (tabMascBtn) tabMascBtn.addEventListener("click", () => selectAttireTab("masc"));
+if (tabClimaBtn) tabClimaBtn.addEventListener("click", () => selectAttireTab("clima"));
+
+if (btnOpenAttireModal) {
+  btnOpenAttireModal.addEventListener("click", () => {
+    selectAttireTab("fem");
+    attireModal.classList.add("active");
+  });
+}
+
+if (closeAttireModal) {
+  closeAttireModal.addEventListener("click", () => {
+    attireModal.classList.remove("active");
+  });
+}
+
 // Abrir modal de presente
 document.querySelectorAll(".btn-gift").forEach(button => {
   button.addEventListener("click", () => {
@@ -860,6 +916,9 @@ window.addEventListener("click", (e) => {
   }
   if (e.target === adminModal) {
     adminModal.classList.remove("active");
+  }
+  if (e.target === attireModal) {
+    attireModal.classList.remove("active");
   }
 });
 

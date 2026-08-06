@@ -293,6 +293,10 @@
               and leaves (such as lavender, lilac, dusty rose, soft coral, sage green, mustard, or slate gray) are
               extremely welcome! The most important thing is that you feel wonderful.</span>
           </p>
+          <button class="btn-elf" id="btn-open-attire-modal" style="margin-top: 1.5rem; width: 100%;">
+            <span class="lang-pt">Ver Guia de Trajes Completo</span>
+            <span class="lang-en">View Full Attire Guide</span>
+          </button>
         </div>
       </div>
     </div>
@@ -860,6 +864,243 @@
     </div>
   </div>
 
+  <!-- MODAL DE GUIA DE TRAJES -->
+  <div class="modal" id="attire-modal">
+    <div class="modal-content" style="max-width: 650px;">
+      <button class="modal-close" id="close-attire-modal">&times;</button>
+      <h3>
+        <span class="lang-pt">Guia de Trajes Recomendados</span>
+        <span class="lang-en">Recommended Attire Guide</span>
+      </h3>
+      <p style="margin: 0.2rem 0 1.5rem 0; color: var(--gold-light); font-size: 1.1rem; font-family: var(--font-title); letter-spacing: 0.05em; text-align: center;">
+        <span class="lang-pt">Esporte Fino / Social Élfico</span>
+        <span class="lang-en">Semi-Formal / Elven Dressy</span>
+      </p>
+
+      <!-- Abas do Modal -->
+      <div class="modal-tabs">
+        <button class="modal-tab-btn active" id="tab-fem-btn">
+          <span class="lang-pt">🌸 Feminino</span>
+          <span class="lang-en">🌸 Ladies</span>
+        </button>
+        <button class="modal-tab-btn" id="tab-masc-btn">
+          <span class="lang-pt">⚔️ Masculino</span>
+          <span class="lang-en">⚔️ Gentlemen</span>
+        </button>
+        <button class="modal-tab-btn" id="tab-clima-btn">
+          <span class="lang-pt">🎨 Paleta & Clima</span>
+          <span class="lang-en">🎨 Palette & Weather</span>
+        </button>
+      </div>
+
+      <!-- Conteúdo da Aba Feminino -->
+      <div class="modal-tab-content active" id="tab-fem-content">
+        <div class="attire-guide-section">
+          <div class="lang-pt">
+            <h4 class="attire-sub-title">👗 Vestuário</h4>
+            <p class="attire-desc">Sugerimos <strong>vestidos midi ou longos</strong> em tecidos leves e fluidos (como crepe, chiffon, seda ou rendas). Detalhes românticos, babados e modelagens de inspiração élfica harmonizam perfeitamente com a floresta e o tema.</p>
+            
+            <h4 class="attire-sub-title">👠 Calçados para o Gramado</h4>
+            <p class="attire-desc">A cerimônia acontecerá ao ar livre sobre gramado natural. Recomendamos fortemente <strong>evitar saltos agulha (finos)</strong>, pois eles afundam na grama. Opte por <strong>salto bloco, salto anabela, mules de salto grosso ou rasteiras e sapatilhas finas</strong> para sua segurança e conforto.</p>
+            
+            <h4 class="attire-sub-title">❄️ Dica para a Noite Gaúcha</h4>
+            <p class="attire-desc">O casamento será em 21/09 no Rio Grande do Sul, marcando o início da primavera. O clima gaúcho nesta época é conhecido por sua grande variação: o dia sob o sol pode ser muito agradável, mas a temperatura cai significativamente à noite na festa em ambiente fechado. <strong>Leve uma pashmina, xale, blazer ou casaco elegante</strong> para usar à noite.</p>
+          </div>
+          <div class="lang-en">
+            <h4 class="attire-sub-title">👗 Dress Wear</h4>
+            <p class="attire-desc">We suggest <strong>midi or long dresses</strong> in light, flowing fabrics (like crepe, chiffon, silk, or lace). Romantic details, drapes, and elven-inspired shapes align beautifully with the forest and the theme.</p>
+            
+            <h4 class="attire-sub-title">👠 Footwear for the Lawn</h4>
+            <p class="attire-desc">The ceremony will take place outdoors on natural grass. We highly recommend <strong>avoiding stiletto (thin) heels</strong>, as they sink into the grass. Opt for <strong>block heels, wedges, block-heeled mules, or elegant flat sandals</strong> for your comfort and safety.</p>
+            
+            <h4 class="attire-sub-title">❄️ Tip for the Southern Night</h4>
+            <p class="attire-desc">The wedding takes place on 09/21 in Rio Grande do Sul, at the start of spring. The southern weather is famous for its thermal range: sunny days can be warm and pleasant, but temperatures drop sharply at night for the indoor party. <strong>Please bring a pashmina, shawl, blazer, or elegant jacket</strong> for the evening.</p>
+          </div>
+
+          <!-- Referências Visuais Feminino -->
+          <h4 class="attire-sub-title">
+            <span class="lang-pt">📷 Referências Visuais</span>
+            <span class="lang-en">📷 Visual References</span>
+          </h4>
+          <div class="attire-gallery-grid">
+            <div class="attire-gallery-item">
+              <img class="attire-gallery-img" src="images/attire_fem_dress.png" alt="Vestimenta e Adereços Femininos">
+              <div class="attire-gallery-label">
+                <span class="lang-pt">Traje & Adereços</span>
+                <span class="lang-en">Outfit & Accessories</span>
+              </div>
+            </div>
+            <div class="attire-gallery-item">
+              <img class="attire-gallery-img" src="images/attire_fem_shoes.png" alt="Calçados Femininos Sugeridos">
+              <div class="attire-gallery-label">
+                <span class="lang-pt">Salto Bloco / Rasteira</span>
+                <span class="lang-en">Block Heel / Flat</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo da Aba Masculino -->
+      <div class="modal-tab-content" id="tab-masc-content">
+        <div class="attire-guide-section">
+          <div class="lang-pt">
+            <h4 class="attire-sub-title">👔 Vestuário</h4>
+            <p class="attire-desc">Sugerimos <strong>calça social ou chino</strong> (tons de cinza, azul-marinho, grafite) combinada com <strong>camisa social de manga longa</strong> (branca ou tons claros como azul suave, lilás ou cinza). O uso de <strong>blazer ou paletó esportivo</strong> é altamente recomendado. Gravata é opcional (pode ser borboleta, clássica ou dispensada para um visual esporte fino moderno).</p>
+            
+            <h4 class="attire-sub-title">👞 Calçados</h4>
+            <p class="attire-desc">Dê preferência a <strong>sapato social clássico, mocassim (loafer)</strong> ou sapatos sociais de couro.</p>
+            
+            <h4 class="attire-sub-title">❄️ Dica para a Noite Gaúcha</h4>
+            <p class="attire-desc">O blazer ou paletó é a peça-chave. Você poderá retirá-lo durante o dia, se estiver quente sob o sol no gramado, e vesti-lo à noite quando a temperatura gaúcha começar a cair no ambiente da festa.</p>
+          </div>
+          <div class="lang-en">
+            <h4 class="attire-sub-title">👔 Men's Attire</h4>
+            <p class="attire-desc">We suggest <strong>dress pants or chinos</strong> (shades of grey, navy, charcoal) paired with a <strong>long-sleeve dress shirt</strong> (white or soft tones like light blue, lavender, or light grey). A <strong>blazer or sport coat</strong> is highly recommended. Tie is optional (classic, bow tie, or no tie for a modern semi-formal look).</p>
+            
+            <h4 class="attire-sub-title">👞 Footwear</h4>
+            <p class="attire-desc">We recommend <strong>classic dress shoes, loafers</strong>, or elegant leather shoes.</p>
+            
+            <h4 class="attire-sub-title">❄️ Tip for the Southern Night</h4>
+            <p class="attire-desc">Your blazer or sport coat is the key piece. You can take it off during the day if it gets warm on the sunny lawn, and put it on in the evening when the cool breeze picks up.</p>
+          </div>
+
+          <!-- Referências Visuais Masculino -->
+          <h4 class="attire-sub-title">
+            <span class="lang-pt">📷 Referências Visuais</span>
+            <span class="lang-en">📷 Visual References</span>
+          </h4>
+          <div class="attire-gallery-grid">
+            <div class="attire-gallery-item">
+              <img class="attire-gallery-img" src="images/attire_masc_suit.png" alt="Vestimenta e Lapela Masculina">
+              <div class="attire-gallery-label">
+                <span class="lang-pt">Traje & Lapela</span>
+                <span class="lang-en">Suit & Lapel Pin</span>
+              </div>
+            </div>
+            <div class="attire-gallery-item">
+              <img class="attire-gallery-img" src="images/attire_masc_shoes.png" alt="Sapatos e Mocassins Masculinos">
+              <div class="attire-gallery-label">
+                <span class="lang-pt">Mocassim / Sapato</span>
+                <span class="lang-en">Loafer / Dress Shoe</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo da Aba Clima & Paleta -->
+      <div class="modal-tab-content" id="tab-clima-content">
+        <div class="attire-guide-section">
+          <!-- Paleta de Cores -->
+          <h4 class="attire-sub-title" style="text-align: center; margin-bottom: 1rem;">
+            <span class="lang-pt">🎨 Paleta de Cores do Evento</span>
+            <span class="lang-en">🎨 Event Color Palette</span>
+          </h4>
+          
+          <p class="attire-desc" style="text-align: center; font-size: 1.05rem;">
+            <span class="lang-pt">Pedimos gentilmente que os convidados <strong>evitem</strong> as cores da paleta oficial (reservadas para padrinhos, madrinhas e decoração):</span>
+            <span class="lang-en">We kindly ask guests to <strong>avoid</strong> the official wedding palette (reserved for bridesmaids, groomsmen, and decor):</span>
+          </p>
+          
+          <!-- Cores a EVITAR -->
+          <div class="swatches-container avoid-swatches">
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #1a382b;"></div>
+              <span class="swatch-label lang-pt">Verde Floresta</span>
+              <span class="swatch-label lang-en">Forest Green</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #c86b45;"></div>
+              <span class="swatch-label lang-pt">Terracota</span>
+              <span class="swatch-label lang-en">Terracotta</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #27384c;"></div>
+              <span class="swatch-label lang-pt">Azul Crepúsculo</span>
+              <span class="swatch-label lang-en">Twilight Blue</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #e5d3b3;"></div>
+              <span class="swatch-label lang-pt">Bege</span>
+              <span class="swatch-label lang-en">Beige</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #f7f6f0; border: 1px solid var(--border-gold);"></div>
+              <span class="swatch-label lang-pt">Off-White / Branco</span>
+              <span class="swatch-label lang-en">Off-White / White</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #cfab3c;"></div>
+              <span class="swatch-label lang-pt">Dourado Sutil</span>
+              <span class="swatch-label lang-en">Subtle Gold</span>
+            </div>
+          </div>
+
+          <p class="attire-desc" style="text-align: center; margin-top: 1.5rem; font-size: 1.05rem;">
+            <span class="lang-pt">Sinta-se muito bem-vindo(a) para vestir tons florais e folhagens de primavera, como:</span>
+            <span class="lang-en">You are very welcome to wear spring-inspired floral and leaf tones, such as:</span>
+          </p>
+
+          <!-- Cores RECOMENDADAS -->
+          <div class="swatches-container suggest-swatches">
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #bfa8e0;"></div>
+              <span class="swatch-label lang-pt">Lavanda / Lilás</span>
+              <span class="swatch-label lang-en">Lavender / Lilac</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #cca9ac;"></div>
+              <span class="swatch-label lang-pt">Rosa Antigo</span>
+              <span class="swatch-label lang-en">Dusty Rose</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #f8b195;"></div>
+              <span class="swatch-label lang-pt">Coral Suave</span>
+              <span class="swatch-label lang-en">Soft Coral</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #9caf88;"></div>
+              <span class="swatch-label lang-pt">Verde Sálvia</span>
+              <span class="swatch-label lang-en">Sage Green</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #deb142;"></div>
+              <span class="swatch-label lang-pt">Mostarda</span>
+              <span class="swatch-label lang-en">Mustard</span>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-circle" style="background-color: #708090;"></div>
+              <span class="swatch-label lang-pt">Cinza Ardósia</span>
+              <span class="swatch-label lang-en">Slate Grey</span>
+            </div>
+          </div>
+          
+          <div style="margin-top: 2rem; border-top: 1px dashed rgba(212, 175, 55, 0.2); padding-top: 1.2rem;">
+            <h4 class="attire-sub-title" style="margin-bottom: 0.5rem; text-align: left;">
+              <span class="lang-pt">📌 Resumo Prático</span>
+              <span class="lang-en">📌 Quick Summary</span>
+            </h4>
+            <ul class="attire-bullets" style="padding-left: 1.2rem; text-align: left; list-style-type: none;">
+              <li style="margin-bottom: 0.5rem; position: relative;">
+                <span class="lang-pt">🍂 <strong>Dia x Noite:</strong> Cerimônia ensolarada ao ar livre, mas noite fresca no RS. Traga um agasalho elegante.</span>
+                <span class="lang-en">🍂 <strong>Day vs Night:</strong> Sunny outdoor ceremony, but cool night in RS. Bring elegant outerwear.</span>
+              </li>
+              <li style="margin-bottom: 0.5rem; position: relative;">
+                <span class="lang-pt">🌱 <strong>Terreno:</strong> O gramado natural da cerimônia exige calçados firmes. Evite salto fino!</span>
+                <span class="lang-en">🌱 <strong>Terrain:</strong> Natural grass at the ceremony requires stable footwear. No stiletto heels!</span>
+              </li>
+              <li style="margin-bottom: 0.5rem; position: relative;">
+                <span class="lang-pt">🌸 <strong>Paleta:</strong> Evite verde escuro, terracota, bege e off-white. Tons pastéis e primaveris são bem-vindos!</span>
+                <span class="lang-en">🌸 <strong>Palette:</strong> Avoid dark green, terracotta, beige, and off-white. Pastel and spring tones are welcome!</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TRIGGER DO PAINEL ADMINISTRATIVO SECRETO -->
   <button class="admin-trigger" id="admin-btn" title="Painel do Casal">
     <svg viewBox="0 0 24 24">
@@ -934,7 +1175,7 @@
       <span class="lang-pt">Música Élfica 🔊</span>
       <span class="lang-en">Elven Music 🔊</span>
     </div>
-    <audio id="bg-music" src="audio/music.mp3" loop preload="auto"></audio>
+    <audio id="bg-music" src="audio/music.m4a" loop preload="auto"></audio>
   </div>
 
   <!-- Script Principal -->

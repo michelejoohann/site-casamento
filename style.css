@@ -1450,3 +1450,153 @@ body.lang-pt .lang-en {
   }
 }
 
+/* =========================================
+   7. GUIA DE TRAJES DETALHADO (MODAL)
+   ========================================= */
+.attire-guide-section {
+  padding: 0.5rem 0;
+  text-align: justify;
+}
+
+.attire-sub-title {
+  font-family: var(--font-title);
+  color: var(--gold-light);
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  border-bottom: 1px dashed rgba(212, 175, 55, 0.15);
+  padding-bottom: 0.3rem;
+}
+
+.attire-desc {
+  font-size: 1.1rem;
+  color: var(--silver);
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+}
+
+.swatches-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.swatch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 85px;
+  transition: var(--transition-smooth);
+}
+
+.swatch-item:hover {
+  transform: translateY(-3px);
+}
+
+.swatch-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.swatch-label {
+  font-size: 0.8rem;
+  color: var(--silver);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.attire-bullets li {
+  padding-left: 0.5rem;
+}
+
+/* Ajustes responsivos para os swatches */
+@media (max-width: 480px) {
+  .swatches-container {
+    gap: 0.8rem;
+  }
+  .swatch-item {
+    width: 75px;
+  }
+  .swatch-circle {
+    width: 34px;
+    height: 34px;
+  }
+  .swatch-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* Grades de Galeria de Referências Visuais de Trajes */
+.attire-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.attire-gallery-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-gold);
+  aspect-ratio: 4 / 3;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transition: var(--transition-smooth);
+}
+
+.attire-gallery-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.18);
+}
+
+.attire-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.attire-gallery-item:hover .attire-gallery-img {
+  transform: scale(1.06);
+}
+
+.attire-gallery-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(7, 19, 14, 0.95) 70%, rgba(7, 19, 14, 0.4));
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  color: var(--gold-light);
+  padding: 0.7rem;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  z-index: 2;
+  transition: var(--transition-smooth);
+}
+
+.attire-gallery-item:hover .attire-gallery-label {
+  color: var(--gold);
+  background: linear-gradient(to top, rgba(12, 30, 21, 0.98) 70%, rgba(12, 30, 21, 0.5));
+}
+
+@media (max-width: 600px) {
+  .attire-gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}
+
