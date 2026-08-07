@@ -278,6 +278,13 @@ if (closeAttireModal) {
   });
 }
 
+const btnCloseAttireBottom = document.getElementById("btn-close-attire-bottom");
+if (btnCloseAttireBottom) {
+  btnCloseAttireBottom.addEventListener("click", () => {
+    attireModal.classList.remove("active");
+  });
+}
+
 // Abrir lightbox para zoom das imagens de referência
 document.querySelectorAll(".attire-gallery-item").forEach(item => {
   item.addEventListener("click", () => {
