@@ -871,12 +871,23 @@ function renderGuestList() {
   const rsvps = JSON.parse(localStorage.getItem("wedding_rsvps")) || [];
   guestListRows.innerHTML = "";
 
+  let confirmedCount = 0;
+  let absentCount = 0;
+  let totalCount = rsvps.length;
+
   if (rsvps.length === 0) {
     guestListRows.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--silver);">${currentLanguage === 'en' ? 'No confirmations received yet.' : 'Nenhuma confirmação recebida ainda.'}</td></tr>`;
+    updateRsvpTotalizers(0, 0, 0);
     return;
   }
 
   rsvps.forEach(rsvp => {
+    if (rsvp.attendance === "Confirmado") {
+      confirmedCount += 1 + (parseInt(rsvp.companions) || 0);
+    } else {
+      absentCount += 1;
+    }
+
     const row = document.createElement("tr");
     row.innerHTML = `
       <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(rsvp.name)}</td>
@@ -888,6 +899,17 @@ function renderGuestList() {
     `;
     guestListRows.appendChild(row);
   });
+
+  updateRsvpTotalizers(confirmedCount, absentCount, totalCount);
+}
+
+function updateRsvpTotalizers(confirmed, absent, total) {
+  const elConfirmed = document.getElementById("val-rsvp-confirmed");
+  const elAbsent = document.getElementById("val-rsvp-absent");
+  const elTotal = document.getElementById("val-rsvp-total");
+  if (elConfirmed) elConfirmed.textContent = confirmed;
+  if (elAbsent) elAbsent.textContent = absent;
+  if (elTotal) elTotal.textContent = total;
 }
 
 // Utilitário para sanitizar HTML
@@ -1024,8 +1046,14 @@ function renderInvitedGuests() {
   if (!invitedRows) return;
   invitedRows.innerHTML = "";
 
+  let totalInvites = 0;
+  let totalCapacity = 0;
+
   // Mostrar lista fixa estática
   for (let name in GUEST_LIST) {
+    totalInvites++;
+    totalCapacity += 1 + (parseInt(GUEST_LIST[name]) || 0);
+
     const row = document.createElement("tr");
     row.innerHTML = `
       <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(name)}</td>
@@ -1038,6 +1066,9 @@ function renderInvitedGuests() {
 
   // Mostrar convidados dinâmicos cadastrados
   for (let name in customGuests) {
+    totalInvites++;
+    totalCapacity += 1 + (parseInt(customGuests[name]) || 0);
+
     const row = document.createElement("tr");
     row.innerHTML = `
       <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(name)}</td>
@@ -1049,6 +1080,15 @@ function renderInvitedGuests() {
     `;
     invitedRows.appendChild(row);
   }
+
+  updateInvitesTotalizers(totalInvites, totalCapacity);
+}
+
+function updateInvitesTotalizers(count, capacity) {
+  const elCount = document.getElementById("val-invites-count");
+  const elCapacity = document.getElementById("val-invites-capacity");
+  if (elCount) elCount.textContent = count;
+  if (elCapacity) elCapacity.textContent = capacity;
 }
 
 function renderVendors() {
