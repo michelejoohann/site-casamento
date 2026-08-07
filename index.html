@@ -637,6 +637,139 @@
     </div>
   </section>
 
+  <!-- SEÇÃO DE FOTOS E DESAFIO -->
+  <section class="section" id="photos-section" style="background-color: rgba(255,255,255,0.01); border-top: 1px solid rgba(212, 175, 55, 0.15); border-bottom: 1px solid rgba(212, 175, 55, 0.15); padding: 5rem 0;">
+    <div class="container">
+      <h2 class="section-title">
+        <span class="lang-pt">Nossas Memórias</span>
+        <span class="lang-en">Our Memories</span>
+      </h2>
+      <p class="section-subtitle">
+        <span class="lang-pt">Veja nosso pré-wedding e compartilhe seus registros do grande dia!</span>
+        <span class="lang-en">See our pre-wedding and share your shots from the big day!</span>
+      </p>
+
+      <div class="photo-layout" style="display: flex; flex-wrap: wrap; gap: 3rem; margin-top: 3rem; align-items: stretch; justify-content: center;">
+        
+        <!-- CARD ESQUERDO: QR CODE E LINK DO ALBUM -->
+        <div class="photo-card-box" style="flex: 1; min-width: 300px; max-width: 480px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-gold); border-radius: 12px; padding: 2.5rem 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: var(--transition-smooth); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <h3 style="font-family: var(--font-title); color: var(--gold-light); margin-top: 0; margin-bottom: 1rem; font-size: 1.5rem;">
+              <span class="lang-pt">📸 Álbum Compartilhado</span>
+              <span class="lang-en">📸 Shared Album</span>
+            </h3>
+            <p style="color: var(--silver); margin-bottom: 2rem; line-height: 1.6; font-size: 0.95rem;">
+              <span class="lang-pt">Use a câmera do seu celular para ler o QR Code abaixo, veja as fotos do nosso ensaio pré-wedding e envie as fotos e vídeos incríveis que você tirar no casamento!</span>
+              <span class="lang-en">Use your phone camera to scan the QR Code below, check our pre-wedding photos, and upload any amazing photos and videos you capture at the wedding!</span>
+            </p>
+          </div>
+          
+          <div style="display: inline-block; background: white; padding: 1rem; border-radius: 8px; margin: 0 auto 2rem auto; width: fit-content; box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://photos.app.goo.gl/DnaEcxSZFswVaCfo7" alt="QR Code Álbum Google Fotos" style="display: block; width: 180px; height: 180px; border: none;">
+          </div>
+          
+          <div>
+            <a href="https://photos.app.goo.gl/DnaEcxSZFswVaCfo7" target="_blank" class="btn-elf" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem 1.8rem;">
+              <span>🖼️</span>
+              <span class="lang-pt">Acessar Álbum Compartilhado</span>
+              <span class="lang-en">Access Shared Album</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD DIREITO: DESAFIO FOTOGRÁFICO -->
+        <div class="photo-card-box" style="flex: 1.2; min-width: 320px; max-width: 550px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-gold); border-radius: 12px; padding: 2.5rem 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: left; transition: var(--transition-smooth);">
+          <h3 style="font-family: var(--font-title); color: var(--gold-light); margin-top: 0; margin-bottom: 1rem; font-size: 1.5rem; text-align: center;">
+            <span class="lang-pt">🎯 Desafio Fotográfico</span>
+            <span class="lang-en">🎯 Photo Challenge</span>
+          </h3>
+          <p style="color: var(--silver); margin-bottom: 2rem; line-height: 1.6; font-size: 0.95rem; text-align: center;">
+            <span class="lang-pt">Nós te desafiamos! Tente capturar essas missões fotográficas durante o casamento e suba as fotos no nosso álbum do Google Fotos para guardarmos de recordação:</span>
+            <span class="lang-en">We challenge you! Try to capture these photo missions during the wedding and upload them to our Google Photos album to keep as memories:</span>
+          </p>
+
+          <!-- LISTA DO DESAFIO -->
+          <div class="photo-challenge-list" style="display: flex; flex-direction: column; gap: 1.2rem;">
+            
+            <label class="challenge-item">
+              <input type="checkbox">
+              <div>
+                <strong style="color: var(--gold-light); display: block;">
+                  <span class="lang-pt">1. Sorriso com os Noivos</span>
+                  <span class="lang-en">1. Smile with the Couple</span>
+                </strong>
+                <span class="lang-pt" style="font-size: 0.9rem;">Uma selfie super alegre sua com o Fabio ou a Michele.</span>
+                <span class="lang-en" style="font-size: 0.9rem;">A joyful selfie of you with Fabio or Michele.</span>
+              </div>
+            </label>
+
+            <label class="challenge-item">
+              <input type="checkbox">
+              <div>
+                <strong style="color: var(--gold-light); display: block;">
+                  <span class="lang-pt">2. Lágrimas de Felicidade</span>
+                  <span class="lang-en">2. Tears of Joy</span>
+                </strong>
+                <span class="lang-pt" style="font-size: 0.9rem;">O momento exato da emoção ou risadas durante a cerimônia.</span>
+                <span class="lang-en" style="font-size: 0.9rem;">The exact moment of emotion or laughter during the ceremony.</span>
+              </div>
+            </label>
+
+            <label class="challenge-item">
+              <input type="checkbox">
+              <div>
+                <strong style="color: var(--gold-light); display: block;">
+                  <span class="lang-pt">3. Dança das Estrelas</span>
+                  <span class="lang-en">3. Dance of the Stars</span>
+                </strong>
+                <span class="lang-pt" style="font-size: 0.9rem;">Um clique dinâmico de alguém arrasando na pista de dança.</span>
+                <span class="lang-en" style="font-size: 0.9rem;">A dynamic shot of someone rockin' the dance floor.</span>
+              </div>
+            </label>
+
+            <label class="challenge-item">
+              <input type="checkbox">
+              <div>
+                <strong style="color: var(--gold-light); display: block;">
+                  <span class="lang-pt">4. Detalhe Élfico</span>
+                  <span class="lang-en">4. Elven Detail</span>
+                </strong>
+                <span class="lang-pt" style="font-size: 0.9rem;">Seu detalhe decorativo preferido ou mesa de doces caprichada.</span>
+                <span class="lang-en" style="font-size: 0.9rem;">Your favorite decorative detail or the delicious sweets table.</span>
+              </div>
+            </label>
+
+            <label class="challenge-item">
+              <input type="checkbox">
+              <div>
+                <strong style="color: var(--gold-light); display: block;">
+                  <span class="lang-pt">5. Um Brinde Especial</span>
+                  <span class="lang-en">5. A Special Toast</span>
+                </strong>
+                <span class="lang-pt" style="font-size: 0.9rem;">Uma foto de copos erguidos brindando na sua mesa.</span>
+                <span class="lang-en" style="font-size: 0.9rem;">A photo of raised glasses toast at your table.</span>
+              </div>
+            </label>
+
+            <label class="challenge-item">
+              <input type="checkbox">
+              <div>
+                <strong style="color: var(--gold-light); display: block;">
+                  <span class="lang-pt">6. Novas Amizades</span>
+                  <span class="lang-en">6. New Friendships</span>
+                </strong>
+                <span class="lang-pt" style="font-size: 0.9rem;">Uma foto descontraída com um convidado que você acabou de conhecer hoje.</span>
+                <span class="lang-en" style="font-size: 0.9rem;">A candid photo with a guest you just met today.</span>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- SEÇÃO RSVP -->
   <section class="section" id="rsvp">
     <div class="container">

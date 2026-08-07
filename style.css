@@ -1880,3 +1880,36 @@ body.lang-pt .lang-en {
   transform: scale(1.1);
 }
 
+/* Photo Challenge Guest Interaction */
+.challenge-item {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  cursor: pointer;
+  color: var(--silver);
+  transition: color 0.3s;
+}
+
+.challenge-item:hover {
+  color: var(--text-light);
+}
+
+.challenge-item input {
+  margin-top: 0.2rem;
+  cursor: pointer;
+  accent-color: var(--gold);
+  width: 18px;
+  height: 18px;
+}
+
+.challenge-item input:checked + div {
+  text-decoration: line-through;
+  opacity: 0.5;
+  transition: opacity 0.3s, text-decoration 0.3s;
+}
+
+.photo-card-box:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold) !important;
+}
+
