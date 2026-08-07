@@ -1788,3 +1788,95 @@ body.lang-pt .lang-en {
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
+/* Ideias & Ritos Cards */
+.admin-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.admin-note-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  transition: var(--transition-smooth);
+}
+
+.admin-note-card:hover {
+  border-color: var(--gold);
+  background: rgba(212, 175, 55, 0.02);
+}
+
+.admin-note-card-title {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  color: var(--gold-light);
+  margin-right: 2rem;
+}
+
+.admin-note-card-category {
+  font-size: 0.75rem;
+  align-self: flex-start;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-note-card-category.rito {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.admin-note-card-category.tradicao {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.admin-note-card-category.ideia {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-light);
+  border: 1px solid var(--border-gold);
+}
+
+.admin-note-card-category.outros {
+  background: rgba(156, 163, 175, 0.15);
+  color: #d1d5db;
+  border: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.admin-note-card-content {
+  font-size: 0.95rem;
+  color: var(--silver);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.btn-delete-note {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  background: transparent;
+  border: none;
+  color: #f87171;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 0 0.3rem;
+}
+
+.btn-delete-note:hover {
+  color: #ef4444;
+  transform: scale(1.1);
+}
+

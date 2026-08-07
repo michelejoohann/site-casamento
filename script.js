@@ -357,7 +357,16 @@ function normalizeText(text) {
 // Obtém lista combinada de convidados (estática + personalizada local)
 function getCombinedGuestList() {
   const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
-  return { ...GUEST_LIST, ...customGuests };
+  const combined = { ...GUEST_LIST };
+  for (let name in customGuests) {
+    const guestData = customGuests[name];
+    if (typeof guestData === 'object' && guestData !== null) {
+      combined[name] = guestData.limit;
+    } else {
+      combined[name] = guestData; // Fallback de migração caso existisse número puro
+    }
+  }
+  return combined;
 }
 
 // Lógica de busca de convidado
@@ -970,29 +979,40 @@ const btnAdminTabRsvp = document.getElementById("btn-admin-tab-rsvp");
 const btnAdminTabGuests = document.getElementById("btn-admin-tab-guests");
 const btnAdminTabVendors = document.getElementById("btn-admin-tab-vendors");
 const btnAdminTabBudget = document.getElementById("btn-admin-tab-budget");
+const btnAdminTabNotes = document.getElementById("btn-admin-tab-notes");
 
 const adminPanelRsvp = document.getElementById("admin-panel-rsvp");
 const adminPanelGuests = document.getElementById("admin-panel-guests");
 const adminPanelVendors = document.getElementById("admin-panel-vendors");
 const adminPanelBudget = document.getElementById("admin-panel-budget");
+const adminPanelNotes = document.getElementById("admin-panel-notes");
 
 const formAddGuest = document.getElementById("form-add-guest");
 const formAddVendor = document.getElementById("form-add-vendor");
 const formAddExpense = document.getElementById("form-add-expense");
+const formAddNote = document.getElementById("form-add-note");
 const btnExportBudgetCsv = document.getElementById("btn-export-budget-csv");
+const notesCardsContainer = document.getElementById("notes-cards-container");
+
+const btnCancelEditGuest = document.getElementById("btn-cancel-edit-guest");
+const btnSubmitGuest = document.getElementById("btn-submit-guest");
+
+let editingGuestName = null; // Guarda o nome do convidado sendo editado
 
 const adminTabButtons = {
   rsvp: btnAdminTabRsvp,
   guests: btnAdminTabGuests,
   vendors: btnAdminTabVendors,
-  budget: btnAdminTabBudget
+  budget: btnAdminTabBudget,
+  notes: btnAdminTabNotes
 };
 
 const adminTabPanels = {
   rsvp: adminPanelRsvp,
   guests: adminPanelGuests,
   vendors: adminPanelVendors,
-  budget: adminPanelBudget
+  budget: adminPanelBudget,
+  notes: adminPanelNotes
 };
 
 function selectAdminTab(tabName) {
@@ -1012,6 +1032,7 @@ if (btnAdminTabRsvp) btnAdminTabRsvp.addEventListener("click", () => selectAdmin
 if (btnAdminTabGuests) btnAdminTabGuests.addEventListener("click", () => selectAdminTab("guests"));
 if (btnAdminTabVendors) btnAdminTabVendors.addEventListener("click", () => selectAdminTab("vendors"));
 if (btnAdminTabBudget) btnAdminTabBudget.addEventListener("click", () => selectAdminTab("budget"));
+if (btnAdminTabNotes) btnAdminTabNotes.addEventListener("click", () => selectAdminTab("notes"));
 
 // Inicializar dados padrão se não existirem
 function initializeAdminDashboard() {
@@ -1032,12 +1053,21 @@ function initializeAdminDashboard() {
     ];
     localStorage.setItem("wedding_expenses", JSON.stringify(defaultExpenses));
   }
+  if (!localStorage.getItem("wedding_notes")) {
+    const defaultNotes = [
+      { title: "Cerimônia das Areias", category: "Rito", content: "Troca de areias coloridas em vasos individuais simbolizando a união indissolúvel dos noivos. Areia branca (Michele) e azul (Fabio)." },
+      { title: "Algo Antigo, Novo, Emprestado e Azul", category: "Tradição", content: "Noiva levará algo antigo (jóia de família), novo (vestido), emprestado (véu de amiga) e azul (detalhe de flor no bouquet)." },
+      { title: "Votos Élficos Personalizados", category: "Ideia", content: "Escrever votos inspirados em falas clássicas de Tolkien (como a promessa de amor de Beren e Lúthien)." }
+    ];
+    localStorage.setItem("wedding_notes", JSON.stringify(defaultNotes));
+  }
 
   // Renderizar todas as seções
   renderGuestList();
   renderInvitedGuests();
   renderVendors();
   renderExpenses();
+  renderNotes();
 }
 
 function renderInvitedGuests() {
@@ -1058,6 +1088,7 @@ function renderInvitedGuests() {
     row.innerHTML = `
       <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(name)}</td>
       <td style="text-align:center;">${GUEST_LIST[name]}</td>
+      <td style="text-align:center;"><span class="badge-status orcado">Ambos</span></td>
       <td><span class="badge-status orcado" style="border-color: rgba(255, 255, 255, 0.1); color: var(--silver);">Lista Inicial</span></td>
       <td>-</td>
     `;
@@ -1066,15 +1097,25 @@ function renderInvitedGuests() {
 
   // Mostrar convidados dinâmicos cadastrados
   for (let name in customGuests) {
+    const guestData = customGuests[name];
+    const limit = typeof guestData === 'object' ? (parseInt(guestData.limit) || 0) : (parseInt(guestData) || 0);
+    const side = typeof guestData === 'object' ? (guestData.side || "Ambos") : "Ambos";
+
     totalInvites++;
-    totalCapacity += 1 + (parseInt(customGuests[name]) || 0);
+    totalCapacity += 1 + limit;
+
+    let sideBadgeClass = "orcado"; // Ambos
+    if (side === "Noiva") sideBadgeClass = "concluido"; // verde
+    if (side === "Noivo") sideBadgeClass = "contratado"; // azul
 
     const row = document.createElement("tr");
     row.innerHTML = `
       <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(name)}</td>
-      <td style="text-align:center;">${customGuests[name]}</td>
+      <td style="text-align:center;">${limit}</td>
+      <td style="text-align:center;"><span class="badge-status ${sideBadgeClass}">${escapeHTML(side)}</span></td>
       <td><span class="badge-status concluido">Painel</span></td>
       <td>
+        <button class="btn-elf btn-edit-custom-guest" data-name="${escapeHTML(name)}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-right: 0.3rem;">Editar</button>
         <button class="btn-delete-row btn-delete-custom-guest" data-name="${escapeHTML(name)}">Excluir</button>
       </td>
     `;
@@ -1208,11 +1249,15 @@ function deleteExpense(index) {
   }
 }
 
-// Event delegation para exclusões (evita inline script no HTML)
+// Event delegation para exclusões e edições (evita inline script no HTML)
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("btn-delete-custom-guest")) {
     const name = e.target.getAttribute("data-name");
     deleteCustomGuest(name);
+  }
+  if (e.target.classList.contains("btn-edit-custom-guest")) {
+    const name = e.target.getAttribute("data-name");
+    editCustomGuest(name);
   }
   if (e.target.classList.contains("btn-delete-vendor")) {
     const index = parseInt(e.target.getAttribute("data-index"));
@@ -1222,6 +1267,10 @@ document.addEventListener("click", (e) => {
     const index = parseInt(e.target.getAttribute("data-index"));
     deleteExpense(index);
   }
+  if (e.target.classList.contains("btn-delete-note-item")) {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    deleteNote(index);
+  }
 });
 
 // Event Listeners dos Formulários
@@ -1230,21 +1279,70 @@ if (formAddGuest) {
     e.preventDefault();
     const nameInput = document.getElementById("admin-guest-name");
     const limitInput = document.getElementById("admin-guest-limit");
+    const sideInput = document.getElementById("admin-guest-side");
     const name = nameInput.value.trim();
     const limit = parseInt(limitInput.value) || 0;
+    const side = sideInput ? sideInput.value : "Ambos";
 
     if (!name) return;
 
     const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
-    if (GUEST_LIST[name] !== undefined || customGuests[name] !== undefined) {
-      alert("Este convidado já está na lista!");
-      return;
+
+    if (!editingGuestName) {
+      // Cadastro Novo
+      if (GUEST_LIST[name] !== undefined || customGuests[name] !== undefined) {
+        alert("Este convidado já está na lista!");
+        return;
+      }
+    } else {
+      // Edição: se mudou o nome, remove o registro antigo
+      if (editingGuestName !== name) {
+        delete customGuests[editingGuestName];
+      }
     }
 
-    customGuests[name] = limit;
+    customGuests[name] = { limit: limit, side: side };
     localStorage.setItem("wedding_custom_guests", JSON.stringify(customGuests));
+
+    // Limpa estado de edição
+    editingGuestName = null;
+    if (btnSubmitGuest) btnSubmitGuest.textContent = "+ Adicionar";
+    if (btnCancelEditGuest) btnCancelEditGuest.style.display = "none";
+
     formAddGuest.reset();
     renderInvitedGuests();
+  });
+}
+
+function editCustomGuest(name) {
+  const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
+  const guestData = customGuests[name];
+  if (!guestData) return;
+
+  editingGuestName = name;
+
+  const limit = typeof guestData === 'object' ? guestData.limit : guestData;
+  const side = typeof guestData === 'object' ? guestData.side : "Ambos";
+
+  document.getElementById("admin-guest-name").value = name;
+  document.getElementById("admin-guest-limit").value = limit;
+  
+  const elSide = document.getElementById("admin-guest-side");
+  if (elSide) elSide.value = side;
+
+  if (btnSubmitGuest) btnSubmitGuest.textContent = "Salvar";
+  if (btnCancelEditGuest) btnCancelEditGuest.style.display = "block";
+
+  const formEl = document.getElementById("form-add-guest");
+  if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+if (btnCancelEditGuest) {
+  btnCancelEditGuest.addEventListener("click", () => {
+    editingGuestName = null;
+    formAddGuest.reset();
+    if (btnSubmitGuest) btnSubmitGuest.textContent = "+ Adicionar";
+    btnCancelEditGuest.style.display = "none";
   });
 }
 
@@ -1338,6 +1436,67 @@ if (searchInvitedInput) {
         }
       }
     });
+  });
+}
+
+// Renderizar Notas/Ideias de Ritos e Tradições
+function renderNotes() {
+  const notes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
+  if (!notesCardsContainer) return;
+  notesCardsContainer.innerHTML = "";
+
+  if (notes.length === 0) {
+    notesCardsContainer.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--silver); padding: 2rem 0;">Nenhuma nota ou ideia cadastrada ainda.</div>`;
+    return;
+  }
+
+  notes.forEach((note, index) => {
+    let catClass = "outros";
+    if (note.category === "Rito") catClass = "rito";
+    if (note.category === "Tradição" || note.category === "Tradicao") catClass = "tradicao";
+    if (note.category === "Ideia") catClass = "ideia";
+
+    const card = document.createElement("div");
+    card.className = "admin-note-card";
+    card.innerHTML = `
+      <button class="btn-delete-note btn-delete-note-item" data-index="${index}" title="Excluir">&times;</button>
+      <div class="admin-note-card-title">${escapeHTML(note.title)}</div>
+      <span class="admin-note-card-category ${catClass}">${escapeHTML(note.category)}</span>
+      <div class="admin-note-card-content">${escapeHTML(note.content)}</div>
+    `;
+    notesCardsContainer.appendChild(card);
+  });
+}
+
+function deleteNote(index) {
+  const notes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
+  if (confirm(`Deseja mesmo excluir a nota "${notes[index].title}"?`)) {
+    notes.splice(index, 1);
+    localStorage.setItem("wedding_notes", JSON.stringify(notes));
+    renderNotes();
+  }
+}
+
+// Formulário de Adicionar Nota
+if (formAddNote) {
+  formAddNote.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const titleInput = document.getElementById("note-title");
+    const categoryInput = document.getElementById("note-category");
+    const contentInput = document.getElementById("note-content");
+
+    const title = titleInput.value.trim();
+    const category = categoryInput.value;
+    const content = contentInput.value.trim();
+
+    if (!title || !content) return;
+
+    const notes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
+    notes.push({ title, category, content });
+    localStorage.setItem("wedding_notes", JSON.stringify(notes));
+
+    formAddNote.reset();
+    renderNotes();
   });
 }
 

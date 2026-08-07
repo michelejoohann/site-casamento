@@ -1152,6 +1152,9 @@
           <button class="modal-tab-btn" id="btn-admin-tab-budget">
             <span>💰 Financeiro</span>
           </button>
+          <button class="modal-tab-btn" id="btn-admin-tab-notes">
+            <span>💡 Ideias & Ritos</span>
+          </button>
         </div>
 
         <!-- ABA 1: CONFIRMADOS (RSVP) -->
@@ -1218,18 +1221,29 @@
             </div>
           </div>
 
-          <!-- Formulário para Adicionar Convidado -->
+          <!-- Formulário para Adicionar/Editar Convidado -->
           <form id="form-add-guest" class="admin-form">
             <div class="admin-form-row">
-              <div class="admin-input-group" style="flex: 2;">
+              <div class="admin-input-group" style="flex: 2; min-width: 180px;">
                 <label for="admin-guest-name">Nome do Convidado Principal</label>
                 <input type="text" id="admin-guest-name" class="form-control" placeholder="Ex: Aragorn Elessar" required>
               </div>
-              <div class="admin-input-group" style="flex: 1;">
+              <div class="admin-input-group" style="flex: 1; min-width: 90px;">
                 <label for="admin-guest-limit">Acompanhantes</label>
                 <input type="number" id="admin-guest-limit" class="form-control" min="0" value="0" required>
               </div>
-              <button type="submit" class="btn-submit" style="flex: 1; align-self: flex-end; margin-bottom: 0; padding: 0.8rem;">+ Adicionar</button>
+              <div class="admin-input-group" style="flex: 1; min-width: 110px;">
+                <label for="admin-guest-side">Lado / Relação</label>
+                <select id="admin-guest-side" class="form-control" required>
+                  <option value="Ambos">Ambos</option>
+                  <option value="Noiva">Noiva</option>
+                  <option value="Noivo">Noivo</option>
+                </select>
+              </div>
+              <div style="flex: 1.2; display: flex; gap: 0.5rem; align-self: flex-end;">
+                <button type="submit" id="btn-submit-guest" class="btn-submit" style="flex: 1.5; margin-bottom: 0; padding: 0.8rem;">+ Adicionar</button>
+                <button type="button" id="btn-cancel-edit-guest" class="btn-submit" style="flex: 1; margin-bottom: 0; padding: 0.8rem; border-color: var(--silver); color: var(--silver); background: transparent; display: none;">Cancelar</button>
+              </div>
             </div>
           </form>
 
@@ -1244,6 +1258,7 @@
                 <tr>
                   <th>Nome do Convite</th>
                   <th>Limite de Acompanhantes</th>
+                  <th>Lado / Relação</th>
                   <th>Origem</th>
                   <th>Ações</th>
                 </tr>
@@ -1415,6 +1430,42 @@
 
           <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
             <button class="btn-elf" id="btn-export-budget-csv">Exportar Planilha CSV</button>
+          </div>
+        </div>
+
+        <!-- ABA 5: IDEIAS, RITOS E TRADIÇÕES -->
+        <div class="admin-tab-panel" id="admin-panel-notes" style="display: none;">
+          <p style="color: var(--silver); margin: 1rem 0; font-size: 1.1rem; text-align: left;">
+            Anote ideias de ritos, rituais, tradições ou inspirações para organizar os bastidores da cerimônia e festa.
+          </p>
+
+          <!-- Formulário de Nova Nota -->
+          <form id="form-add-note" class="admin-form">
+            <div class="admin-form-row" style="flex-wrap: wrap; gap: 0.8rem;">
+              <div class="admin-input-group" style="flex: 2; min-width: 180px;">
+                <label for="note-title">Título do Rito ou Ideia</label>
+                <input type="text" id="note-title" class="form-control" placeholder="Ex: Cerimônia da Luz / Algo Azul" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 130px;">
+                <label for="note-category">Categoria</label>
+                <select id="note-category" class="form-control" required>
+                  <option value="Rito">Rito / Ritual</option>
+                  <option value="Tradição">Tradição</option>
+                  <option value="Ideia">Ideia / Inspiração</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+              <div class="admin-input-group" style="flex: 3; min-width: 250px;">
+                <label for="note-content">Descrição / Notas Detalhadas</label>
+                <input type="text" id="note-content" class="form-control" placeholder="Ex: Acender uma vela juntos simbolizando a nova família..." required>
+              </div>
+              <button type="submit" class="btn-submit" style="min-width: 100px; height: 42px; margin-top: auto; padding: 0;">+ Adicionar</button>
+            </div>
+          </form>
+
+          <!-- Container dos Cards de Notas -->
+          <div id="notes-cards-container" class="admin-notes-grid" style="margin-top: 1.5rem;">
+            <!-- Preenchido via JS -->
           </div>
         </div>
 
