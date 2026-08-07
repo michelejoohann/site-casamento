@@ -1274,6 +1274,18 @@
       <!-- Conteúdo do Painel (Inicialmente Oculto) -->
       <div id="admin-data" style="display: none;">
         
+        <!-- Barra de Backup e Sincronização -->
+        <div class="admin-global-actions" style="display: flex; gap: 0.8rem; margin: 1rem 0; flex-wrap: wrap; background: rgba(212,175,55,0.05); border: 1px solid var(--border-gold); padding: 1rem; border-radius: 8px; align-items: center; justify-content: space-between;">
+          <div style="font-size: 0.95rem; color: var(--silver); text-align: left; flex: 1; min-width: 250px;">
+            <strong>💾 Backup de Segurança:</strong> Salve ou restaure toda a sua lista de convidados, fornecedores, controle financeiro e ideias em um arquivo.
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn-elf" id="btn-export-json" style="padding: 0.5rem 1rem; font-size: 0.85rem; margin-top:0;">Exportar Backup (JSON)</button>
+            <button class="btn-elf" id="btn-import-json" style="padding: 0.5rem 1rem; font-size: 0.85rem; margin-top:0; border-color: #4ade80; color: #4ade80;" onmouseover="this.style.backgroundColor='rgba(74,222,128,0.1)'" onmouseout="this.style.backgroundColor='transparent'">Importar Backup</button>
+            <input type="file" id="input-import-json" accept=".json" style="display: none;">
+          </div>
+        </div>
+
         <!-- Abas do Painel Administrativo -->
         <div class="modal-tabs" style="margin-top: 1rem;">
           <button class="modal-tab-btn active" id="btn-admin-tab-rsvp">

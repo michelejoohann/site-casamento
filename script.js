@@ -1607,6 +1607,91 @@ window.addEventListener("click", startAutoplayOnInteraction);
 window.addEventListener("scroll", startAutoplayOnInteraction);
 window.addEventListener("touchstart", startAutoplayOnInteraction);
 
+// =========================================
+// 7. BACKUP E RESTAURAÇÃO DE DADOS (JSON)
+// =========================================
+const btnExportJson = document.getElementById("btn-export-json");
+const btnImportJson = document.getElementById("btn-import-json");
+const inputImportJson = document.getElementById("input-import-json");
+
+if (btnExportJson) {
+  btnExportJson.addEventListener("click", () => {
+    const backupData = {
+      wedding_custom_guests: JSON.parse(localStorage.getItem("wedding_custom_guests")) || {},
+      wedding_vendors: JSON.parse(localStorage.getItem("wedding_vendors")) || [],
+      wedding_expenses: JSON.parse(localStorage.getItem("wedding_expenses")) || [],
+      wedding_notes: JSON.parse(localStorage.getItem("wedding_notes")) || [],
+      wedding_rsvps: JSON.parse(localStorage.getItem("wedding_rsvps")) || []
+    };
+
+    const jsonString = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `casamento_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+}
+
+if (btnImportJson && inputImportJson) {
+  btnImportJson.addEventListener("click", () => {
+    inputImportJson.click();
+  });
+
+  inputImportJson.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const backupData = JSON.parse(event.target.result);
+        
+        if (
+          backupData.wedding_custom_guests === undefined &&
+          backupData.wedding_vendors === undefined &&
+          backupData.wedding_expenses === undefined &&
+          backupData.wedding_notes === undefined
+        ) {
+          alert("Arquivo de backup inválido ou incompatível!");
+          return;
+        }
+
+        if (confirm("Importar este arquivo substituirá todos os seus dados atuais de Convidados, Fornecedores, Financeiro e Ideias por este backup. Deseja continuar?")) {
+          if (backupData.wedding_custom_guests) {
+            localStorage.setItem("wedding_custom_guests", JSON.stringify(backupData.wedding_custom_guests));
+          }
+          if (backupData.wedding_vendors) {
+            localStorage.setItem("wedding_vendors", JSON.stringify(backupData.wedding_vendors));
+          }
+          if (backupData.wedding_expenses) {
+            localStorage.setItem("wedding_expenses", JSON.stringify(backupData.wedding_expenses));
+          }
+          if (backupData.wedding_notes) {
+            localStorage.setItem("wedding_notes", JSON.stringify(backupData.wedding_notes));
+          }
+          if (backupData.wedding_rsvps) {
+            localStorage.setItem("wedding_rsvps", JSON.stringify(backupData.wedding_rsvps));
+          }
+
+          // Recarregar os dados na tela
+          initializeAdminDashboard();
+          alert("Backup restaurado com sucesso!");
+        }
+      } catch (err) {
+        alert("Erro ao ler o arquivo de backup: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+    inputImportJson.value = "";
+  });
+}
+
 /*
 =================================================================================
 CÓDIGO ATUALIZADO DO GOOGLE APPS SCRIPT (COM SOBRESCRITA E SUPORTE A BUSCA GET)
