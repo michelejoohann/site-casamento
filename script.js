@@ -10,17 +10,7 @@ const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
 // Chave: Nome exato do convidado principal (como você enviará no convite).
 // Valor: Limite máximo de acompanhantes que essa pessoa pode levar (0 significa individual).
 // O sistema é inteligente: ele ignora acentos, maiúsculas/minúsculas e espaços extras ao validar.
-const GUEST_LIST = {
-  "Brixius": 1,
-  "Dani, Jardel, Livia, Alice e acompanhantes": 5, // Dani + 5 acompanhantes (Jardel, Livia, Alice + 2 extras) = 6 pessoas no total
-  "Fabio": 0,
-  "Michele": 0,
-  "Elrond": 1,
-  "Arwen Undomiel": 2,
-  "Galadriel": 3,
-  "Frodo Bolseiro": 0,
-  "Samwise Gamgi": 1
-};
+const GUEST_LIST = {};
 
 // Elementos da página
 const elDays = document.getElementById("days");
