@@ -811,6 +811,25 @@ function resetRsvpForm() {
 
 // Auto-busca via parâmetro na URL (?g=Brixius ou ?convidado=Brixius)
 window.addEventListener("DOMContentLoaded", () => {
+  // Carga em segundo plano (background) da lista de convidados cadastrados na planilha do Google Drive
+  if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
+    fetch(`${GOOGLE_SHEET_URL}?action=loadGuests`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data === 'object' && !data.error) {
+          localStorage.setItem("wedding_custom_guests", JSON.stringify(data));
+          // Re-executa a busca por parâmetro se houver, agora com a lista atualizada
+          const urlParams = new URLSearchParams(window.location.search);
+          const guestParam = urlParams.get("g") || urlParams.get("convidado") || urlParams.get("guest");
+          if (guestParam) {
+            inputName.value = decodeURIComponent(guestParam);
+            searchInvitation();
+          }
+        }
+      })
+      .catch(err => console.error("Erro ao carregar convidados do Google Drive:", err));
+  }
+
   const urlParams = new URLSearchParams(window.location.search);
   const guestParam = urlParams.get("g") || urlParams.get("convidado") || urlParams.get("guest");
   
@@ -880,8 +899,7 @@ function performAdminLogin() {
     isAdminAuthenticated = true;
     adminAuthSection.style.display = "none";
     adminDataSection.style.display = "block";
-    initializeAdminDashboard();
-    selectAdminTab("rsvp");
+    syncFromGoogleSheets();
   } else {
     alert(currentLanguage === 'en' ? "Incorrect password!" : "Senha incorreta!");
     adminPassInput.value = "";
@@ -1243,6 +1261,7 @@ function deleteCustomGuest(name) {
     const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
     delete customGuests[name];
     localStorage.setItem("wedding_custom_guests", JSON.stringify(customGuests));
+    saveToGoogleSheets();
     renderInvitedGuests();
   }
 }
@@ -1252,6 +1271,7 @@ function deleteVendor(index) {
   if (confirm(`Deseja mesmo remover o fornecedor "${vendors[index].name}"?`)) {
     vendors.splice(index, 1);
     localStorage.setItem("wedding_vendors", JSON.stringify(vendors));
+    saveToGoogleSheets();
     renderVendors();
   }
 }
@@ -1261,6 +1281,7 @@ function deleteExpense(index) {
   if (confirm(`Deseja mesmo remover a despesa "${expenses[index].name}"?`)) {
     expenses.splice(index, 1);
     localStorage.setItem("wedding_expenses", JSON.stringify(expenses));
+    saveToGoogleSheets();
     renderExpenses();
   }
 }
@@ -1319,6 +1340,7 @@ if (formAddGuest) {
 
     customGuests[name] = { limit: limit, side: side };
     localStorage.setItem("wedding_custom_guests", JSON.stringify(customGuests));
+    saveToGoogleSheets();
 
     // Limpa estado de edição
     editingGuestName = null;
@@ -1374,6 +1396,7 @@ if (formAddVendor) {
     const vendors = JSON.parse(localStorage.getItem("wedding_vendors")) || [];
     vendors.push({ name, category, contact, status, notes });
     localStorage.setItem("wedding_vendors", JSON.stringify(vendors));
+    saveToGoogleSheets();
     
     formAddVendor.reset();
     renderVendors();
@@ -1394,6 +1417,7 @@ if (formAddExpense) {
     const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
     expenses.push({ name, vendor, budgeted, paid, payer, date, method });
     localStorage.setItem("wedding_expenses", JSON.stringify(expenses));
+    saveToGoogleSheets();
 
     formAddExpense.reset();
     renderExpenses();
@@ -1489,6 +1513,7 @@ function deleteNote(index) {
   if (confirm(`Deseja mesmo excluir a nota "${notes[index].title}"?`)) {
     notes.splice(index, 1);
     localStorage.setItem("wedding_notes", JSON.stringify(notes));
+    saveToGoogleSheets();
     renderNotes();
   }
 }
@@ -1510,6 +1535,7 @@ if (formAddNote) {
     const notes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
     notes.push({ title, category, content });
     localStorage.setItem("wedding_notes", JSON.stringify(notes));
+    saveToGoogleSheets();
 
     formAddNote.reset();
     renderNotes();
@@ -1681,6 +1707,7 @@ if (btnImportJson && inputImportJson) {
 
           // Recarregar os dados na tela
           initializeAdminDashboard();
+          saveToGoogleSheets();
           alert("Backup restaurado com sucesso!");
         }
       } catch (err) {
@@ -1692,100 +1719,101 @@ if (btnImportJson && inputImportJson) {
   });
 }
 
+// =========================================
+// 8. SINCRONIZAÇÃO NATIVA COM O GOOGLE DRIVE
+// =========================================
+function syncFromGoogleSheets() {
+  if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
+    initializeAdminDashboard();
+    return;
+  }
+
+  const syncStatus = document.getElementById("cloud-sync-status");
+  if (syncStatus) {
+    syncStatus.innerHTML = "🔄 Sincronizando com o Google Drive...";
+    syncStatus.style.color = "var(--gold)";
+  }
+
+  fetch(`${GOOGLE_SHEET_URL}?action=loadAll`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && !data.error) {
+        if (data.customGuests) localStorage.setItem("wedding_custom_guests", JSON.stringify(data.customGuests));
+        if (data.vendors) localStorage.setItem("wedding_vendors", JSON.stringify(data.vendors));
+        if (data.expenses) localStorage.setItem("wedding_expenses", JSON.stringify(data.expenses));
+        if (data.notes) localStorage.setItem("wedding_notes", JSON.stringify(data.notes));
+        if (data.rsvps) localStorage.setItem("wedding_rsvps", JSON.stringify(data.rsvps));
+        
+        if (syncStatus) {
+          syncStatus.innerHTML = "☁️ Sincronizado com o Drive";
+          syncStatus.style.color = "#4ade80";
+        }
+      } else {
+        if (syncStatus) {
+          syncStatus.innerHTML = "⚠️ Falha ao ler nuvem (modo local)";
+          syncStatus.style.color = "#f87171";
+        }
+      }
+      initializeAdminDashboard();
+    })
+    .catch(err => {
+      console.error("Erro na sincronização:", err);
+      if (syncStatus) {
+        syncStatus.innerHTML = "⚠️ Offline / Falha de conexão";
+        syncStatus.style.color = "#f87171";
+      }
+      initializeAdminDashboard();
+    });
+}
+
+function saveToGoogleSheets() {
+  if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
+    return;
+  }
+
+  const syncStatus = document.getElementById("cloud-sync-status");
+  if (syncStatus) {
+    syncStatus.innerHTML = "🔄 Salvando alterações no Drive...";
+    syncStatus.style.color = "var(--gold)";
+  }
+
+  const payload = {
+    action: "syncAll",
+    data: {
+      customGuests: JSON.parse(localStorage.getItem("wedding_custom_guests")) || {},
+      vendors: JSON.parse(localStorage.getItem("wedding_vendors")) || [],
+      expenses: JSON.parse(localStorage.getItem("wedding_expenses")) || [],
+      notes: JSON.parse(localStorage.getItem("wedding_notes")) || []
+    }
+  };
+
+  fetch(GOOGLE_SHEET_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    if (syncStatus) {
+      syncStatus.innerHTML = "☁️ Alterações salvas no Drive";
+      syncStatus.style.color = "#4ade80";
+    }
+  })
+  .catch(err => {
+    console.error("Erro ao salvar na nuvem:", err);
+    if (syncStatus) {
+      syncStatus.innerHTML = "⚠️ Falha ao salvar (salvo localmente)";
+      syncStatus.style.color = "#f87171";
+    }
+  });
+}
+
 /*
 =================================================================================
-CÓDIGO ATUALIZADO DO GOOGLE APPS SCRIPT (COM SOBRESCRITA E SUPORTE A BUSCA GET)
+NOVO CÓDIGO DO GOOGLE APPS SCRIPT (MULTI-ABAS: RSVP, CONVIDADOS, FORNECEDORES, CUSTOS, IDEIAS)
 =================================================================================
+Substitua todo o código do seu Google Apps Script por este. Ele gerenciará todas as 
+planilhas no mesmo arquivo de planilha automaticamente (criando abas adicionais).
 
-// 1. Processa requisições POST para salvar/atualizar confirmações
-function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
-    
-    var nameToFind = data.name;
-    var sheetData = sheet.getDataRange().getValues();
-    var rowIndex = -1;
-    
-    var normalize = function(text) {
-      return text.toString().trim().toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
-    
-    var normalizedSearch = normalize(nameToFind);
-    
-    // Procura se já existe uma confirmação com esse nome para sobrescrever
-    for (var i = 1; i < sheetData.length; i++) {
-      var rowName = sheetData[i][0]; // Coluna A (Nome)
-      if (normalize(rowName) === normalizedSearch) {
-        rowIndex = i + 1; // Google Sheets é 1-indexed
-        break;
-      }
-    }
-    
-    var rowData = [
-      data.name,
-      data.email,
-      data.whatsapp,
-      data.attendance,
-      data.companions,
-      data.companionNames || "",
-      data.message,
-      data.date || new Date().toLocaleString("pt-BR")
-    ];
-    
-    if (rowIndex !== -1) {
-      // Sobrescreve a linha do convidado existente
-      var range = sheet.getRange(rowIndex, 1, 1, rowData.length);
-      range.setValues([rowData]);
-    } else {
-      // Adiciona uma nova linha se for inédito
-      sheet.appendRow(rowData);
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({ "result": "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "error": error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// 2. Processa requisições GET para checar se um convidado já confirmou
 function doGet(e) {
   try {
-    var nameToFind = e.parameter.name;
-    if (!nameToFind) {
-      return ContentService.createTextOutput(JSON.stringify({ "found": false }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var sheetData = sheet.getDataRange().getValues();
-    var found = false;
-    
-    var normalize = function(text) {
-      return text.toString().trim().toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
-    
-    var normalizedSearch = normalize(nameToFind);
-    
-    for (var i = 1; i < sheetData.length; i++) {
-      var rowName = sheetData[i][0]; // Coluna A (Nome)
-      if (normalize(rowName) === normalizedSearch) {
-        found = true;
-        break;
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({ "found": found }))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ "found": false, "error": error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
 */
