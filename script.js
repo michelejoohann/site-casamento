@@ -435,7 +435,8 @@ function searchInvitation() {
 
     // Abre o formulário
     rsvpFields.style.display = "block";
-    guestSlotsGroup.style.display = matchedLimit > 0 ? "block" : "none";
+    const isGroup = guestNames.length > 1 || matchedLimit > 0;
+    guestSlotsGroup.style.display = isGroup ? "block" : "none";
   } else {
     // Mensagem de erro
     validationMsg.innerHTML = `<span style="color: #f87171;">${translations[currentLanguage].searchError}</span>`;
@@ -521,8 +522,8 @@ function parseGuestNames(invitationName) {
 function buildGuestSlots(names, limit) {
   guestSlotsContainer.innerHTML = "";
   
-  // Vagas totais = 1 principal + limite de acompanhantes
-  const totalSpots = 1 + limit;
+  // Vagas totais = Nomes identificados + limite de acompanhantes
+  const totalSpots = names.length + limit;
   
   for (let i = 0; i < totalSpots; i++) {
     const slotRow = document.createElement("div");
@@ -670,7 +671,9 @@ radioAttendance.forEach(radio => {
     if (e.target.value === "Ausente") {
       guestSlotsGroup.style.display = "none";
     } else {
-      if (validatedLimit > 0) {
+      const guestNames = parseGuestNames(validatedGuestName);
+      const isGroup = guestNames.length > 1 || validatedLimit > 0;
+      if (isGroup) {
         guestSlotsGroup.style.display = "block";
       }
     }
@@ -689,8 +692,11 @@ rsvpForm.addEventListener("submit", (e) => {
   let totalConfirmed = 0;
   let namesConfirmed = "";
   
+  const guestNames = parseGuestNames(name);
+  const isGroup = guestNames.length > 1 || validatedLimit > 0;
+
   if (attendance === "Confirmado") {
-    if (validatedLimit > 0) {
+    if (isGroup) {
       const slotRows = document.querySelectorAll(".guest-slot-row");
       const confirmedNames = [];
       
@@ -891,10 +897,11 @@ function renderGuestList() {
   }
 
   rsvps.forEach(rsvp => {
+    const peopleInName = Math.max(1, parseGuestNames(rsvp.name).length);
     if (rsvp.attendance === "Confirmado") {
-      confirmedCount += 1 + (parseInt(rsvp.companions) || 0);
+      confirmedCount += parseInt(rsvp.companions) || 1;
     } else {
-      absentCount += 1;
+      absentCount += peopleInName;
     }
 
     const row = document.createElement("tr");
@@ -1082,7 +1089,8 @@ function renderInvitedGuests() {
   // Mostrar lista fixa estática
   for (let name in GUEST_LIST) {
     totalInvites++;
-    totalCapacity += 1 + (parseInt(GUEST_LIST[name]) || 0);
+    const nameCount = Math.max(1, parseGuestNames(name).length);
+    totalCapacity += nameCount + (parseInt(GUEST_LIST[name]) || 0);
 
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -1102,7 +1110,8 @@ function renderInvitedGuests() {
     const side = typeof guestData === 'object' ? (guestData.side || "Ambos") : "Ambos";
 
     totalInvites++;
-    totalCapacity += 1 + limit;
+    const nameCount = Math.max(1, parseGuestNames(name).length);
+    totalCapacity += nameCount + limit;
 
     let sideBadgeClass = "orcado"; // Ambos
     if (side === "Noiva") sideBadgeClass = "concluido"; // verde
