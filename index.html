@@ -745,8 +745,8 @@
           eternal light upon the face of the Earth."</span>
       </p>
       <p class="footer-credits">
-        <span class="lang-pt">© 2026-2027 • Feito com magia para Michele & Fabio</span>
-        <span class="lang-en">© 2026-2027 • Made with magic for Michele & Fabio</span>
+        <span class="lang-pt">© 2026-2027 • Feito com magia para Michele & Fabio • <a href="#" class="admin-trigger-link" style="color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Painel do Casal</a></span>
+        <span class="lang-en">© 2026-2027 • Made with magic for Michele & Fabio • <a href="#" class="admin-trigger-link" style="color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Couple's Dashboard</a></span>
       </p>
     </div>
   </footer>
@@ -1123,12 +1123,11 @@
   <div class="modal" id="admin-modal">
     <div class="modal-content admin-modal-content">
       <button class="modal-close" id="close-admin-modal">&times;</button>
-      <h3>Painel de Confirmados (Casal)</h3>
+      <h3>Painel de Bastidores (Noivos)</h3>
 
       <!-- Tela de Senha -->
       <div id="admin-auth">
-        <p style="margin: 1rem 0; color: var(--silver);">Insira a senha do amor eterno para acessar os dados dos
-          convidados:</p>
+        <p style="margin: 1rem 0; color: var(--silver);">Insira a senha do amor eterno para acessar os dados de organização:</p>
         <div class="admin-password-form">
           <input type="password" id="admin-pass" class="form-control" style="text-align: center; margin-bottom: 1rem;"
             placeholder="Senha">
@@ -1136,33 +1135,256 @@
         </div>
       </div>
 
-      <!-- Conteúdo das Confirmações (Inicialmente Oculto) -->
+      <!-- Conteúdo do Painel (Inicialmente Oculto) -->
       <div id="admin-data" style="display: none;">
-        <p style="color: var(--silver); margin-bottom: 1rem;">Lista de convidados que preencheram o formulário RSVP:</p>
-
-        <div class="admin-table-container">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Presença</th>
-                <th>Confirmados</th>
-                <th>WhatsApp</th>
-                <th>E-mail</th>
-                <th>Mensagem</th>
-              </tr>
-            </thead>
-            <tbody id="guest-list-rows">
-              <!-- Preenchido via JS -->
-            </tbody>
-          </table>
+        
+        <!-- Abas do Painel Administrativo -->
+        <div class="modal-tabs" style="margin-top: 1rem;">
+          <button class="modal-tab-btn active" id="btn-admin-tab-rsvp">
+            <span>🌿 RSVP</span>
+          </button>
+          <button class="modal-tab-btn" id="btn-admin-tab-guests">
+            <span>👥 Convites</span>
+          </button>
+          <button class="modal-tab-btn" id="btn-admin-tab-vendors">
+            <span>🤝 Fornecedores</span>
+          </button>
+          <button class="modal-tab-btn" id="btn-admin-tab-budget">
+            <span>💰 Financeiro</span>
+          </button>
         </div>
 
-        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
-          <button class="btn-elf" id="btn-export-csv">Exportar CSV</button>
-          <button class="btn-elf" id="btn-clear-rsvp" style="border-color: #ef4444; color: #ef4444;">Limpar
-            Tudo</button>
+        <!-- ABA 1: CONFIRMADOS (RSVP) -->
+        <div class="admin-tab-panel active" id="admin-panel-rsvp">
+          <p style="color: var(--silver); margin: 1rem 0; font-size: 1.1rem; text-align: left;">
+            Lista de convidados que preencheram o formulário RSVP no site:
+          </p>
+
+          <div class="admin-table-container">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Presença</th>
+                  <th>Confirmados</th>
+                  <th>WhatsApp</th>
+                  <th>E-mail</th>
+                  <th>Mensagem</th>
+                </tr>
+              </thead>
+              <tbody id="guest-list-rows">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+            <button class="btn-elf" id="btn-export-csv">Exportar CSV</button>
+            <button class="btn-elf" id="btn-clear-rsvp" style="border-color: #ef4444; color: #ef4444;">Limpar Todos</button>
+          </div>
         </div>
+
+        <!-- ABA 2: LISTA DE CONVITES (GESTÃO DE CONVIDADOS) -->
+        <div class="admin-tab-panel" id="admin-panel-guests" style="display: none;">
+          <p style="color: var(--silver); margin: 1rem 0; font-size: 1.1rem; text-align: left;">
+            Adicione nomes autorizados a confirmar presença no RSVP. Os nomes adicionados aqui podem ser pesquisados na busca do RSVP do site imediatamente.
+          </p>
+
+          <!-- Formulário para Adicionar Convidado -->
+          <form id="form-add-guest" class="admin-form">
+            <div class="admin-form-row">
+              <div class="admin-input-group" style="flex: 2;">
+                <label for="admin-guest-name">Nome do Convidado Principal</label>
+                <input type="text" id="admin-guest-name" class="form-control" placeholder="Ex: Aragorn Elessar" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1;">
+                <label for="admin-guest-limit">Acompanhantes</label>
+                <input type="number" id="admin-guest-limit" class="form-control" min="0" value="0" required>
+              </div>
+              <button type="submit" class="btn-submit" style="flex: 1; align-self: flex-end; margin-bottom: 0; padding: 0.8rem;">+ Adicionar</button>
+            </div>
+          </form>
+
+          <div class="admin-table-container" style="margin-top: 1.5rem;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nome do Convite</th>
+                  <th>Limite de Acompanhantes</th>
+                  <th>Origem</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="invited-list-rows">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ABA 3: FORNECEDORES -->
+        <div class="admin-tab-panel" id="admin-panel-vendors" style="display: none;">
+          <p style="color: var(--silver); margin: 1rem 0; font-size: 1.1rem; text-align: left;">
+            Gerencie os fornecedores contratados ou orçados para o grande dia.
+          </p>
+
+          <!-- Formulário de Fornecedor -->
+          <form id="form-add-vendor" class="admin-form">
+            <div class="admin-form-row" style="flex-wrap: wrap; gap: 0.8rem;">
+              <div class="admin-input-group" style="flex: 1.5; min-width: 150px;">
+                <label for="vendor-name">Nome/Empresa</label>
+                <input type="text" id="vendor-name" class="form-control" placeholder="Ex: Salão de Elrond" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 120px;">
+                <label for="vendor-category">Categoria</label>
+                <select id="vendor-category" class="form-control" required>
+                  <option value="Local">Local</option>
+                  <option value="Buffet">Buffet</option>
+                  <option value="Decoração">Decoração</option>
+                  <option value="Banda/DJ">Banda/DJ</option>
+                  <option value="Foto/Vídeo">Foto/Vídeo</option>
+                  <option value="Doces/Bolo">Doces/Bolo</option>
+                  <option value="Trajes">Trajes</option>
+                  <option value="Assessoria">Assessoria</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 120px;">
+                <label for="vendor-contact">Contato</label>
+                <input type="text" id="vendor-contact" class="form-control" placeholder="Ex: (51) 99999-0000">
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 120px;">
+                <label for="vendor-status">Status</label>
+                <select id="vendor-status" class="form-control" required>
+                  <option value="Orçado">Orçado</option>
+                  <option value="Contratado">Contratado</option>
+                  <option value="Concluído">Concluído</option>
+                </select>
+              </div>
+              <div class="admin-input-group" style="flex: 2; min-width: 200px;">
+                <label for="vendor-notes">Anotações</label>
+                <input type="text" id="vendor-notes" class="form-control" placeholder="Ex: Pagar em 3x no Pix">
+              </div>
+              <button type="submit" class="btn-submit" style="min-width: 100px; height: 42px; margin-top: auto; padding: 0;">+ Cadastrar</button>
+            </div>
+          </form>
+
+          <div class="admin-table-container" style="margin-top: 1.5rem;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nome / Empresa</th>
+                  <th>Categoria</th>
+                  <th>Contato</th>
+                  <th>Status</th>
+                  <th>Anotações</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="vendor-list-rows">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ABA 4: CONTROLE FINANCEIRO -->
+        <div class="admin-tab-panel" id="admin-panel-budget" style="display: none;">
+          <p style="color: var(--silver); margin: 1rem 0; font-size: 1.1rem; text-align: left;">
+            Acompanhe o orçamento, valores pagos e pendentes de cada despesa do casamento.
+          </p>
+
+          <!-- CARDS DE TOTALIZADORES FINANCEIROS -->
+          <div class="finance-cards">
+            <div class="finance-card">
+              <span class="finance-card-title">Total Orçado</span>
+              <span class="finance-card-value" id="val-total-budgeted">R$ 0,00</span>
+            </div>
+            <div class="finance-card card-paid">
+              <span class="finance-card-title">Total Pago</span>
+              <span class="finance-card-value" id="val-total-paid">R$ 0,00</span>
+            </div>
+            <div class="finance-card card-pending">
+              <span class="finance-card-title">Total Pendente</span>
+              <span class="finance-card-value" id="val-total-pending">R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- Formulário de Despesa -->
+          <form id="form-add-expense" class="admin-form">
+            <div class="admin-form-row" style="flex-wrap: wrap; gap: 0.8rem;">
+              <div class="admin-input-group" style="flex: 2; min-width: 160px;">
+                <label for="expense-name">Item/Serviço</label>
+                <input type="text" id="expense-name" class="form-control" placeholder="Ex: Vestido de Noiva" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1.5; min-width: 130px;">
+                <label for="expense-vendor">Fornecedor</label>
+                <input type="text" id="expense-vendor" class="form-control" placeholder="Ex: Atelier Élfico" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 90px;">
+                <label for="expense-budgeted">Valor Orçado</label>
+                <input type="number" id="expense-budgeted" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 90px;">
+                <label for="expense-paid">Valor Pago</label>
+                <input type="number" id="expense-paid" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 110px;">
+                <label for="expense-payer">Quem Pagou</label>
+                <select id="expense-payer" class="form-control">
+                  <option value="Michele">Michele</option>
+                  <option value="Fabio">Fabio</option>
+                  <option value="Noivos (Juntos)">Noivos</option>
+                  <option value="Família Michele">Família Noiva</option>
+                  <option value="Família Fabio">Família Noivo</option>
+                  <option value="Pendente" selected>Pendente</option>
+                </select>
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 110px;">
+                <label for="expense-date">Data Pagto.</label>
+                <input type="text" id="expense-date" class="form-control" placeholder="Ex: 07/08/2026">
+              </div>
+              <div class="admin-input-group" style="flex: 1; min-width: 110px;">
+                <label for="expense-method">Forma Pagto.</label>
+                <select id="expense-method" class="form-control">
+                  <option value="N/A" selected>Pendente</option>
+                  <option value="Pix">Pix</option>
+                  <option value="Crédito">Crédito</option>
+                  <option value="Boleto">Boleto</option>
+                  <option value="Dinheiro">Dinheiro</option>
+                  <option value="Transferência">TED/DOC</option>
+                </select>
+              </div>
+              <button type="submit" class="btn-submit" style="min-width: 100px; height: 42px; margin-top: auto; padding: 0;">+ Lançar</button>
+            </div>
+          </form>
+
+          <div class="admin-table-container" style="margin-top: 1.5rem;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Item / Serviço</th>
+                  <th>Fornecedor</th>
+                  <th>Orçado</th>
+                  <th>Pago</th>
+                  <th>Pendente</th>
+                  <th>Pagador</th>
+                  <th>Data</th>
+                  <th>Forma</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="expense-list-rows">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+            <button class="btn-elf" id="btn-export-budget-csv">Exportar Planilha CSV</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

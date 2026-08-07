@@ -364,6 +364,12 @@ function normalizeText(text) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+// Obtém lista combinada de convidados (estática + personalizada local)
+function getCombinedGuestList() {
+  const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
+  return { ...GUEST_LIST, ...customGuests };
+}
+
 // Lógica de busca de convidado
 function searchInvitation() {
   const typedName = inputName.value.trim();
@@ -378,15 +384,16 @@ function searchInvitation() {
     return;
   }
 
+  const combinedList = getCombinedGuestList();
   let matchedName = "";
   let matchedLimit = 0;
   let found = false;
 
   // 1. Tenta correspondência exata primeiro
-  for (let guest in GUEST_LIST) {
+  for (let guest in combinedList) {
     if (normalizeText(guest) === normalizedTyped) {
       matchedName = guest;
-      matchedLimit = GUEST_LIST[guest];
+      matchedLimit = combinedList[guest];
       found = true;
       break;
     }
@@ -394,10 +401,10 @@ function searchInvitation() {
 
   // 2. Se não encontrou exato, tenta correspondência parcial (se o nome na lista contiver o termo digitado)
   if (!found) {
-    for (let guest in GUEST_LIST) {
+    for (let guest in combinedList) {
       if (normalizeText(guest).includes(normalizedTyped)) {
         matchedName = guest;
-        matchedLimit = GUEST_LIST[guest];
+        matchedLimit = combinedList[guest];
         found = true;
         break;
       }
@@ -817,10 +824,8 @@ const btnClearRsvp = document.getElementById("btn-clear-rsvp");
 
 let isAdminAuthenticated = false;
 
-// Ocultar botão do painel se o Google Sheets estiver ativo
-if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL !== "SUA_URL_DO_GOOGLE_SCRIPT_AQUI") {
-  adminBtn.style.display = "none";
-}
+// O painel administrativo local está sempre disponível via botão flutuante e no rodapé do site
+// (a verificação do GOOGLE_SHEET_URL foi removida para garantir o acesso aos controles de bastidores)
 
 // Abrir modal admin
 adminBtn.addEventListener("click", () => {
@@ -830,11 +835,20 @@ adminBtn.addEventListener("click", () => {
   if (isAdminAuthenticated) {
     adminAuthSection.style.display = "none";
     adminDataSection.style.display = "block";
-    renderGuestList();
+    initializeAdminDashboard();
+    selectAdminTab("rsvp");
   } else {
     adminAuthSection.style.display = "block";
     adminDataSection.style.display = "none";
   }
+});
+
+// Abrir modal admin via links do rodapé
+document.querySelectorAll(".admin-trigger-link").forEach(link => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    adminBtn.click();
+  });
 });
 
 // Fechar modal admin
@@ -854,7 +868,8 @@ function performAdminLogin() {
     isAdminAuthenticated = true;
     adminAuthSection.style.display = "none";
     adminDataSection.style.display = "block";
-    renderGuestList();
+    initializeAdminDashboard();
+    selectAdminTab("rsvp");
   } else {
     alert(currentLanguage === 'en' ? "Incorrect password!" : "Senha incorreta!");
     adminPassInput.value = "";
@@ -935,6 +950,346 @@ btnClearRsvp.addEventListener("click", () => {
     renderGuestList();
   }
 });
+
+// =================================================
+// 5.5. LOGICA DOS BASTIDORES (DASHBOARD ADMINISTRATIVO)
+// =================================================
+const btnAdminTabRsvp = document.getElementById("btn-admin-tab-rsvp");
+const btnAdminTabGuests = document.getElementById("btn-admin-tab-guests");
+const btnAdminTabVendors = document.getElementById("btn-admin-tab-vendors");
+const btnAdminTabBudget = document.getElementById("btn-admin-tab-budget");
+
+const adminPanelRsvp = document.getElementById("admin-panel-rsvp");
+const adminPanelGuests = document.getElementById("admin-panel-guests");
+const adminPanelVendors = document.getElementById("admin-panel-vendors");
+const adminPanelBudget = document.getElementById("admin-panel-budget");
+
+const formAddGuest = document.getElementById("form-add-guest");
+const formAddVendor = document.getElementById("form-add-vendor");
+const formAddExpense = document.getElementById("form-add-expense");
+const btnExportBudgetCsv = document.getElementById("btn-export-budget-csv");
+
+const adminTabButtons = {
+  rsvp: btnAdminTabRsvp,
+  guests: btnAdminTabGuests,
+  vendors: btnAdminTabVendors,
+  budget: btnAdminTabBudget
+};
+
+const adminTabPanels = {
+  rsvp: adminPanelRsvp,
+  guests: adminPanelGuests,
+  vendors: adminPanelVendors,
+  budget: adminPanelBudget
+};
+
+function selectAdminTab(tabName) {
+  for (let key in adminTabButtons) {
+    if (!adminTabButtons[key]) continue;
+    if (key === tabName) {
+      adminTabButtons[key].classList.add("active");
+      adminTabPanels[key].style.display = "block";
+    } else {
+      adminTabButtons[key].classList.remove("active");
+      adminTabPanels[key].style.display = "none";
+    }
+  }
+}
+
+if (btnAdminTabRsvp) btnAdminTabRsvp.addEventListener("click", () => selectAdminTab("rsvp"));
+if (btnAdminTabGuests) btnAdminTabGuests.addEventListener("click", () => selectAdminTab("guests"));
+if (btnAdminTabVendors) btnAdminTabVendors.addEventListener("click", () => selectAdminTab("vendors"));
+if (btnAdminTabBudget) btnAdminTabBudget.addEventListener("click", () => selectAdminTab("budget"));
+
+// Inicializar dados padrão se não existirem
+function initializeAdminDashboard() {
+  if (!localStorage.getItem("wedding_custom_guests")) {
+    localStorage.setItem("wedding_custom_guests", JSON.stringify({}));
+  }
+  if (!localStorage.getItem("wedding_vendors")) {
+    const defaultVendors = [
+      { name: "Salão Rivendell", category: "Local", contact: "(51) 98765-4321", status: "Contratado", notes: "Local da cerimônia ao ar livre" },
+      { name: "Banquetes do Condado", category: "Buffet", contact: "(51) 98888-7777", status: "Orçado", notes: "Menu completo com churrasco gaúcho" }
+    ];
+    localStorage.setItem("wedding_vendors", JSON.stringify(defaultVendors));
+  }
+  if (!localStorage.getItem("wedding_expenses")) {
+    const defaultExpenses = [
+      { name: "Aluguel do Espaço", vendor: "Salão Rivendell", budgeted: 15000.00, paid: 5000.00, payer: "Noivos (Juntos)", date: "01/08/2026", method: "Transferência" },
+      { name: "Buffet Completo", vendor: "Banquetes do Condado", budgeted: 12000.00, paid: 0.00, payer: "Pendente", date: "", method: "N/A" }
+    ];
+    localStorage.setItem("wedding_expenses", JSON.stringify(defaultExpenses));
+  }
+
+  // Renderizar todas as seções
+  renderGuestList();
+  renderInvitedGuests();
+  renderVendors();
+  renderExpenses();
+}
+
+function renderInvitedGuests() {
+  const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
+  const invitedRows = document.getElementById("invited-list-rows");
+  if (!invitedRows) return;
+  invitedRows.innerHTML = "";
+
+  // Mostrar lista fixa estática
+  for (let name in GUEST_LIST) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(name)}</td>
+      <td style="text-align:center;">${GUEST_LIST[name]}</td>
+      <td><span class="badge-status orcado" style="border-color: rgba(255, 255, 255, 0.1); color: var(--silver);">Lista Inicial</span></td>
+      <td>-</td>
+    `;
+    invitedRows.appendChild(row);
+  }
+
+  // Mostrar convidados dinâmicos cadastrados
+  for (let name in customGuests) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(name)}</td>
+      <td style="text-align:center;">${customGuests[name]}</td>
+      <td><span class="badge-status concluido">Painel</span></td>
+      <td>
+        <button class="btn-delete-row btn-delete-custom-guest" data-name="${escapeHTML(name)}">Excluir</button>
+      </td>
+    `;
+    invitedRows.appendChild(row);
+  }
+}
+
+function renderVendors() {
+  const vendors = JSON.parse(localStorage.getItem("wedding_vendors")) || [];
+  const vendorRows = document.getElementById("vendor-list-rows");
+  if (!vendorRows) return;
+  vendorRows.innerHTML = "";
+
+  if (vendors.length === 0) {
+    vendorRows.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--silver);">Nenhum fornecedor cadastrado.</td></tr>`;
+    return;
+  }
+
+  vendors.forEach((vendor, index) => {
+    let statusClass = "orcado";
+    if (vendor.status === "Contratado") statusClass = "contratado";
+    if (vendor.status === "Concluído" || vendor.status === "Concluido") statusClass = "concluido";
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(vendor.name)}</td>
+      <td>${escapeHTML(vendor.category)}</td>
+      <td>${escapeHTML(vendor.contact)}</td>
+      <td><span class="badge-status ${statusClass}">${escapeHTML(vendor.status)}</span></td>
+      <td style="font-size:0.95rem; font-style:italic;">${escapeHTML(vendor.notes) || '-'}</td>
+      <td>
+        <button class="btn-delete-row btn-delete-vendor" data-index="${index}">Excluir</button>
+      </td>
+    `;
+    vendorRows.appendChild(row);
+  });
+}
+
+function renderExpenses() {
+  const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
+  const expenseRows = document.getElementById("expense-list-rows");
+  if (!expenseRows) return;
+  expenseRows.innerHTML = "";
+
+  let totalBudgeted = 0;
+  let totalPaid = 0;
+  let totalPending = 0;
+
+  if (expenses.length === 0) {
+    expenseRows.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--silver);">Nenhuma despesa lançada.</td></tr>`;
+    updateBudgetCards(0, 0, 0);
+    return;
+  }
+
+  expenses.forEach((expense, index) => {
+    const budgeted = parseFloat(expense.budgeted) || 0;
+    const paid = parseFloat(expense.paid) || 0;
+    const pending = budgeted - paid;
+
+    totalBudgeted += budgeted;
+    totalPaid += paid;
+    totalPending += pending;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="font-weight:600; color:var(--gold-light);">${escapeHTML(expense.name)}</td>
+      <td>${escapeHTML(expense.vendor)}</td>
+      <td>${formatCurrency(budgeted)}</td>
+      <td style="color:#4ade80;">${formatCurrency(paid)}</td>
+      <td style="color:${pending > 0 ? '#f87171' : 'var(--silver)'};">${formatCurrency(pending)}</td>
+      <td>${escapeHTML(expense.payer)}</td>
+      <td>${escapeHTML(expense.date) || '-'}</td>
+      <td>${escapeHTML(expense.method)}</td>
+      <td>
+        <button class="btn-delete-row btn-delete-expense" data-index="${index}">Excluir</button>
+      </td>
+    `;
+    expenseRows.appendChild(row);
+  });
+
+  updateBudgetCards(totalBudgeted, totalPaid, totalPending);
+}
+
+function formatCurrency(val) {
+  return val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function updateBudgetCards(budgeted, paid, pending) {
+  const elBudgeted = document.getElementById("val-total-budgeted");
+  const elPaid = document.getElementById("val-total-paid");
+  const elPending = document.getElementById("val-total-pending");
+  if (elBudgeted) elBudgeted.textContent = formatCurrency(budgeted);
+  if (elPaid) elPaid.textContent = formatCurrency(paid);
+  if (elPending) elPending.textContent = formatCurrency(pending);
+}
+
+// Funções de Deletar
+function deleteCustomGuest(name) {
+  if (confirm(`Deseja mesmo remover "${name}" da lista de convites?`)) {
+    const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
+    delete customGuests[name];
+    localStorage.setItem("wedding_custom_guests", JSON.stringify(customGuests));
+    renderInvitedGuests();
+  }
+}
+
+function deleteVendor(index) {
+  const vendors = JSON.parse(localStorage.getItem("wedding_vendors")) || [];
+  if (confirm(`Deseja mesmo remover o fornecedor "${vendors[index].name}"?`)) {
+    vendors.splice(index, 1);
+    localStorage.setItem("wedding_vendors", JSON.stringify(vendors));
+    renderVendors();
+  }
+}
+
+function deleteExpense(index) {
+  const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
+  if (confirm(`Deseja mesmo remover a despesa "${expenses[index].name}"?`)) {
+    expenses.splice(index, 1);
+    localStorage.setItem("wedding_expenses", JSON.stringify(expenses));
+    renderExpenses();
+  }
+}
+
+// Event delegation para exclusões (evita inline script no HTML)
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("btn-delete-custom-guest")) {
+    const name = e.target.getAttribute("data-name");
+    deleteCustomGuest(name);
+  }
+  if (e.target.classList.contains("btn-delete-vendor")) {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    deleteVendor(index);
+  }
+  if (e.target.classList.contains("btn-delete-expense")) {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    deleteExpense(index);
+  }
+});
+
+// Event Listeners dos Formulários
+if (formAddGuest) {
+  formAddGuest.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nameInput = document.getElementById("admin-guest-name");
+    const limitInput = document.getElementById("admin-guest-limit");
+    const name = nameInput.value.trim();
+    const limit = parseInt(limitInput.value) || 0;
+
+    if (!name) return;
+
+    const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
+    if (GUEST_LIST[name] !== undefined || customGuests[name] !== undefined) {
+      alert("Este convidado já está na lista!");
+      return;
+    }
+
+    customGuests[name] = limit;
+    localStorage.setItem("wedding_custom_guests", JSON.stringify(customGuests));
+    formAddGuest.reset();
+    renderInvitedGuests();
+  });
+}
+
+if (formAddVendor) {
+  formAddVendor.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = document.getElementById("vendor-name").value.trim();
+    const category = document.getElementById("vendor-category").value;
+    const contact = document.getElementById("vendor-contact").value.trim();
+    const status = document.getElementById("vendor-status").value;
+    const notes = document.getElementById("vendor-notes").value.trim();
+
+    const vendors = JSON.parse(localStorage.getItem("wedding_vendors")) || [];
+    vendors.push({ name, category, contact, status, notes });
+    localStorage.setItem("wedding_vendors", JSON.stringify(vendors));
+    
+    formAddVendor.reset();
+    renderVendors();
+  });
+}
+
+if (formAddExpense) {
+  formAddExpense.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = document.getElementById("expense-name").value.trim();
+    const vendor = document.getElementById("expense-vendor").value.trim();
+    const budgeted = parseFloat(document.getElementById("expense-budgeted").value) || 0;
+    const paid = parseFloat(document.getElementById("expense-paid").value) || 0;
+    const payer = document.getElementById("expense-payer").value;
+    const date = document.getElementById("expense-date").value.trim();
+    const method = document.getElementById("expense-method").value;
+
+    const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
+    expenses.push({ name, vendor, budgeted, paid, payer, date, method });
+    localStorage.setItem("wedding_expenses", JSON.stringify(expenses));
+
+    formAddExpense.reset();
+    renderExpenses();
+  });
+}
+
+// Exportar Planilha de Custos para CSV
+if (btnExportBudgetCsv) {
+  btnExportBudgetCsv.addEventListener("click", () => {
+    const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
+    if (expenses.length === 0) {
+      alert("Não há dados de despesas para exportar.");
+      return;
+    }
+
+    let csvContent = "\uFEFFItem;Fornecedor;Orcado;Pago;Pendente;Payer;Data;Forma\n";
+    expenses.forEach(exp => {
+      const name = exp.name.replace(/;/g, ",");
+      const vendor = exp.vendor.replace(/;/g, ",");
+      const budgeted = exp.budgeted;
+      const paid = exp.paid;
+      const pending = budgeted - paid;
+      const payer = exp.payer;
+      const date = exp.date || "";
+      const method = exp.method;
+      
+      csvContent += `"${name}";"${vendor}";${budgeted};${paid};${pending};"${payer}";"${date}";"${method}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `controle_financeiro_casamento.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
 
 // Fechar modais ao clicar fora
 window.addEventListener("click", (e) => {
