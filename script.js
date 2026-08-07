@@ -240,6 +240,12 @@ const tabFemContent = document.getElementById("tab-fem-content");
 const tabMascContent = document.getElementById("tab-masc-content");
 const tabClimaContent = document.getElementById("tab-clima-content");
 
+// LIGHTBOX
+const lightboxModal = document.getElementById("lightbox-modal");
+const lightboxImg = document.getElementById("lightbox-img");
+const lightboxCaption = document.getElementById("lightbox-caption");
+const closeLightboxModal = document.getElementById("close-lightbox-modal");
+
 function selectAttireTab(tab) {
   if (tab === "fem") {
     tabFemBtn.classList.add("active");
@@ -279,6 +285,27 @@ if (btnOpenAttireModal) {
 if (closeAttireModal) {
   closeAttireModal.addEventListener("click", () => {
     attireModal.classList.remove("active");
+  });
+}
+
+// Abrir lightbox para zoom das imagens de referência
+document.querySelectorAll(".attire-gallery-item").forEach(item => {
+  item.addEventListener("click", () => {
+    const img = item.querySelector(".attire-gallery-img");
+    const label = item.querySelector(".attire-gallery-label");
+    
+    const activeSpan = label.querySelector(`.lang-${currentLanguage}`);
+    const captionText = activeSpan ? activeSpan.textContent : label.textContent;
+
+    lightboxImg.src = img.src;
+    lightboxCaption.textContent = captionText;
+    lightboxModal.classList.add("active");
+  });
+});
+
+if (closeLightboxModal) {
+  closeLightboxModal.addEventListener("click", () => {
+    lightboxModal.classList.remove("active");
   });
 }
 
@@ -919,6 +946,9 @@ window.addEventListener("click", (e) => {
   }
   if (e.target === attireModal) {
     attireModal.classList.remove("active");
+  }
+  if (e.target === lightboxModal) {
+    lightboxModal.classList.remove("active");
   }
 });
 
