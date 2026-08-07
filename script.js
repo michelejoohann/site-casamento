@@ -1281,6 +1281,26 @@ if (btnExportBudgetCsv) {
   });
 }
 
+// Filtro de pesquisa em tempo real na lista de convites
+const searchInvitedInput = document.getElementById("search-invited-guests");
+if (searchInvitedInput) {
+  searchInvitedInput.addEventListener("input", (e) => {
+    const term = normalizeText(e.target.value);
+    const rows = document.querySelectorAll("#invited-list-rows tr");
+    rows.forEach(row => {
+      const nameCell = row.querySelector("td");
+      if (nameCell) {
+        const nameText = normalizeText(nameCell.textContent);
+        if (nameText.includes(term)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      }
+    });
+  });
+}
+
 // Fechar modais ao clicar fora
 window.addEventListener("click", (e) => {
   if (e.target === giftModal) {
