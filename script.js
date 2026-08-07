@@ -1124,8 +1124,8 @@ function renderInvitedGuests() {
       <td style="text-align:center;"><span class="badge-status ${sideBadgeClass}">${escapeHTML(side)}</span></td>
       <td><span class="badge-status concluido">Painel</span></td>
       <td>
-        <button class="btn-elf btn-edit-custom-guest" data-name="${escapeHTML(name)}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-right: 0.3rem;">Editar</button>
-        <button class="btn-delete-row btn-delete-custom-guest" data-name="${escapeHTML(name)}">Excluir</button>
+        <button class="btn-elf btn-edit-custom-guest" data-name="${encodeURIComponent(name)}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-right: 0.3rem;">Editar</button>
+        <button class="btn-delete-row btn-delete-custom-guest" data-name="${encodeURIComponent(name)}">Excluir</button>
       </td>
     `;
     invitedRows.appendChild(row);
@@ -1261,11 +1261,11 @@ function deleteExpense(index) {
 // Event delegation para exclusões e edições (evita inline script no HTML)
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("btn-delete-custom-guest")) {
-    const name = e.target.getAttribute("data-name");
+    const name = decodeURIComponent(e.target.getAttribute("data-name") || "");
     deleteCustomGuest(name);
   }
   if (e.target.classList.contains("btn-edit-custom-guest")) {
-    const name = e.target.getAttribute("data-name");
+    const name = decodeURIComponent(e.target.getAttribute("data-name") || "");
     editCustomGuest(name);
   }
   if (e.target.classList.contains("btn-delete-vendor")) {
@@ -1326,7 +1326,7 @@ if (formAddGuest) {
 function editCustomGuest(name) {
   const customGuests = JSON.parse(localStorage.getItem("wedding_custom_guests")) || {};
   const guestData = customGuests[name];
-  if (!guestData) return;
+  if (guestData === undefined || guestData === null) return;
 
   editingGuestName = name;
 
