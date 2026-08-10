@@ -1179,6 +1179,7 @@ function renderVendors() {
 
   vendors.forEach((vendor, index) => {
     let statusClass = "orcado";
+    if (vendor.status === "Pendente") statusClass = "pendente";
     if (vendor.status === "Contratado") statusClass = "contratado";
     if (vendor.status === "Concluído" || vendor.status === "Concluido") statusClass = "concluido";
 

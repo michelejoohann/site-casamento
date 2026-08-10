@@ -1797,6 +1797,12 @@ body.lang-pt .lang-en {
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
+.badge-status.pendente {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
 /* Ideias & Ritos Cards */
 .admin-notes-grid {
   display: grid;
