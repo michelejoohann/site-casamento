@@ -1922,3 +1922,124 @@ body.lang-pt .lang-en {
   border-color: var(--gold) !important;
 }
 
+/* --- Melhorias de Responsividade para o Painel de Bastidores --- */
+@media (max-width: 768px) {
+  /* 1. Garantir que o modal não transborde e fique centralizado */
+  .admin-modal-content {
+    width: 95% !important;
+    margin: 1rem auto !important;
+    padding: 1.5rem 1rem !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* 2. Barra de abas rolável horizontalmente (Swiper Effect) */
+  .admin-modal-content .modal-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.5rem !important;
+    border-bottom: 2px solid var(--border-gold) !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 1.2rem !important;
+  }
+  
+  .admin-modal-content .modal-tab-btn {
+    flex: 0 0 auto !important; /* Mantém largura natural */
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.85rem !important;
+    border-bottom: 2px solid transparent !important;
+  }
+
+  .admin-modal-content .modal-tab-btn.active {
+    border-bottom-color: var(--gold) !important;
+  }
+
+  /* Ocultar barra de rolagem horizontal para um visual mais limpo, mas manter funcionalidade */
+  .admin-modal-content .modal-tabs::-webkit-scrollbar {
+    height: 4px;
+  }
+  .admin-modal-content .modal-tabs::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  /* 3. Ajustes nos formulários administrativos (stack vertical) */
+  .admin-form-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  .admin-input-group, 
+  .admin-form-row > div {
+    width: 100% !important;
+    min-width: 100% !important;
+    flex: none !important;
+  }
+
+  /* Ajuste no botão de envio para ocupar a linha toda */
+  .admin-form-row button[type="submit"],
+  .admin-form-row button.btn-submit {
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* 4. Cards estatísticos totalizadores em bloco */
+  .finance-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+    gap: 0.8rem !important;
+  }
+
+  .finance-card {
+    min-width: 0 !important; /* Permite encolher abaixo do min-width original */
+    padding: 0.8rem !important;
+  }
+  
+  .finance-card-title {
+    font-size: 0.7rem !important;
+  }
+  
+  .finance-card-value {
+    font-size: 1.2rem !important;
+  }
+
+  /* 5. Barra de backup e ações globais */
+  .admin-global-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    text-align: center !important;
+  }
+
+  .admin-global-actions > div {
+    text-align: center !important;
+    min-width: 100% !important;
+  }
+
+  .admin-global-actions button {
+    width: 100% !important;
+  }
+
+  /* 6. Ajustar tamanho da tabela e botões de ação para caber em telas pequenas */
+  .admin-table th, 
+  .admin-table td {
+    padding: 0.6rem 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .admin-table button {
+    padding: 0.3rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* 7. Grid de notas/ideias no mobile */
+  .admin-notes-grid {
+    grid-template-columns: 1fr !important; /* Uma nota por linha */
+    gap: 1rem !important;
+  }
+}
+
