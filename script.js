@@ -1085,13 +1085,16 @@ function initializeAdminDashboard() {
     ];
     localStorage.setItem("wedding_expenses", JSON.stringify(defaultExpenses));
   }
-  if (!localStorage.getItem("wedding_notes")) {
+  const existingNotes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
+  if (existingNotes.length === 0) {
     const defaultNotes = [
-      { title: "Cerimônia das Areias", category: "Rito", content: "Troca de areias coloridas em vasos individuais simbolizando a união indissolúvel dos noivos. Areia branca (Michele) e azul (Fabio)." },
-      { title: "Algo Antigo, Novo, Emprestado e Azul", category: "Tradição", content: "Noiva levará algo antigo (jóia de família), novo (vestido), emprestado (véu de amiga) e azul (detalhe de flor no bouquet)." },
-      { title: "Votos Élficos Personalizados", category: "Ideia", content: "Escrever votos inspirados em falas clássicas de Tolkien (como a promessa de amor de Beren e Lúthien)." }
+      { title: "Cerimônia do Handfasting Élfico", category: "Rito", content: "Tradição celta e medieval onde as mãos dos noivos são atadas com fitas ou cordões dourados e prateados durante os votos, simbolizando a união física e espiritual (como Beren e Lúthien)." },
+      { title: "O Ritmo das Estações (Equinócio)", category: "Tradição", content: "Como o casamento será no equinócio de primavera, faremos uma homenagem com pétalas de flores coloridas da estação ou plantio de uma muda de árvore de folhas verdes em um vaso comum durante a cerimônia." },
+      { title: "Entrada com a Música Tema Instrumental", category: "Ideia", content: "Tocar a melodia da música tema (Balada de Beren e Lúthien) com violino e violão acústico na entrada da noiva para criar uma atmosfera de floresta mágica." },
+      { title: "Iluminação de Lórien", category: "Ideia", content: "Decorar a árvore principal do altar com luzes de fada suspensas (fairy lights) e lamparinas douradas simulando a floresta de Lothlórien." }
     ];
     localStorage.setItem("wedding_notes", JSON.stringify(defaultNotes));
+    saveToGoogleSheets();
   }
 
   // Renderizar todas as seções
