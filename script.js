@@ -854,14 +854,11 @@ const btnExportCsv = document.getElementById("btn-export-csv");
 const btnClearRsvp = document.getElementById("btn-clear-rsvp");
 
 let isAdminAuthenticated = false;
-let editingGuestName = null;
 let editingVendorIndex = null;
 let editingExpenseIndex = null;
 let editingNoteIndex = null;
 
 // Elementos de formulário e botões de bastidores
-const btnSubmitGuest = document.getElementById("btn-submit-guest");
-const btnCancelEditGuest = document.getElementById("btn-cancel-edit-guest");
 const btnSubmitVendor = document.getElementById("btn-submit-vendor");
 const btnCancelEditVendor = document.getElementById("btn-cancel-edit-vendor");
 const btnSubmitExpense = document.getElementById("btn-submit-expense");
