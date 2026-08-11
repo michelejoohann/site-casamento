@@ -955,8 +955,9 @@ function updateRsvpTotalizers(confirmed, absent, total) {
 
 // Utilitário para sanitizar HTML
 function escapeHTML(str) {
-  if (!str) return "";
-  return str.replace(/[&<>'"]/g,
+  if (str === null || str === undefined) return "";
+  const s = String(str);
+  return s.replace(/[&<>'"]/g,
     tag => ({
       '&': '&amp;',
       '<': '&lt;',
