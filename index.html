@@ -1462,7 +1462,10 @@
                 <label for="vendor-notes">Anotações</label>
                 <input type="text" id="vendor-notes" class="form-control" placeholder="Ex: Pagar em 3x no Pix">
               </div>
-              <button type="submit" class="btn-submit" style="min-width: 100px; height: 42px; margin-top: auto; padding: 0;">+ Cadastrar</button>
+              <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: auto; flex: 1.2;">
+                <button type="submit" id="btn-submit-vendor" class="btn-submit" style="flex: 1.5; height: 42px; margin-bottom: 0; padding: 0;">+ Cadastrar</button>
+                <button type="button" id="btn-cancel-edit-vendor" class="btn-submit" style="flex: 1; height: 42px; margin-bottom: 0; padding: 0; border-color: var(--silver); color: var(--silver); background: transparent; display: none;">Cancelar</button>
+              </div>
             </div>
           </form>
 
@@ -1552,7 +1555,10 @@
                   <option value="Transferência">TED/DOC</option>
                 </select>
               </div>
-              <button type="submit" class="btn-submit" style="min-width: 100px; height: 42px; margin-top: auto; padding: 0;">+ Lançar</button>
+              <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: auto; flex: 1.2;">
+                <button type="submit" id="btn-submit-expense" class="btn-submit" style="flex: 1.5; height: 42px; margin-bottom: 0; padding: 0;">+ Lançar</button>
+                <button type="button" id="btn-cancel-edit-expense" class="btn-submit" style="flex: 1; height: 42px; margin-bottom: 0; padding: 0; border-color: var(--silver); color: var(--silver); background: transparent; display: none;">Cancelar</button>
+              </div>
             </div>
           </form>
 
@@ -1608,7 +1614,10 @@
                 <label for="note-content">Descrição / Notas Detalhadas</label>
                 <input type="text" id="note-content" class="form-control" placeholder="Ex: Acender uma vela juntos simbolizando a nova família..." required>
               </div>
-              <button type="submit" class="btn-submit" style="min-width: 100px; height: 42px; margin-top: auto; padding: 0;">+ Adicionar</button>
+              <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: auto; flex: 1.2;">
+                <button type="submit" id="btn-submit-note" class="btn-submit" style="flex: 1.5; height: 42px; margin-bottom: 0; padding: 0;">+ Adicionar</button>
+                <button type="button" id="btn-cancel-edit-note" class="btn-submit" style="flex: 1; height: 42px; margin-bottom: 0; padding: 0; border-color: var(--silver); color: var(--silver); background: transparent; display: none;">Cancelar</button>
+              </div>
             </div>
           </form>
 

@@ -854,6 +854,20 @@ const btnExportCsv = document.getElementById("btn-export-csv");
 const btnClearRsvp = document.getElementById("btn-clear-rsvp");
 
 let isAdminAuthenticated = false;
+let editingGuestName = null;
+let editingVendorIndex = null;
+let editingExpenseIndex = null;
+let editingNoteIndex = null;
+
+// Elementos de formulário e botões de bastidores
+const btnSubmitGuest = document.getElementById("btn-submit-guest");
+const btnCancelEditGuest = document.getElementById("btn-cancel-edit-guest");
+const btnSubmitVendor = document.getElementById("btn-submit-vendor");
+const btnCancelEditVendor = document.getElementById("btn-cancel-edit-vendor");
+const btnSubmitExpense = document.getElementById("btn-submit-expense");
+const btnCancelEditExpense = document.getElementById("btn-cancel-edit-expense");
+const btnSubmitNote = document.getElementById("btn-submit-note");
+const btnCancelEditNote = document.getElementById("btn-cancel-edit-note");
 
 // O painel administrativo local está sempre disponível via botão flutuante e no rodapé do site
 // (a verificação do GOOGLE_SHEET_URL foi removida para garantir o acesso aos controles de bastidores)
@@ -1195,6 +1209,7 @@ function renderVendors() {
       <td><span class="badge-status ${statusClass}">${escapeHTML(vendor.status)}</span></td>
       <td style="font-size:0.95rem; font-style:italic;">${escapeHTML(vendor.notes) || '-'}</td>
       <td>
+        <button class="btn-elf btn-edit-vendor" data-index="${index}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-right: 0.3rem;">Editar</button>
         <button class="btn-delete-row btn-delete-vendor" data-index="${index}">Excluir</button>
       </td>
     `;
@@ -1238,6 +1253,7 @@ function renderExpenses() {
       <td>${escapeHTML(expense.date) || '-'}</td>
       <td>${escapeHTML(expense.method)}</td>
       <td>
+        <button class="btn-elf btn-edit-expense" data-index="${index}" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-right: 0.3rem;">Editar</button>
         <button class="btn-delete-row btn-delete-expense" data-index="${index}">Excluir</button>
       </td>
     `;
@@ -1305,13 +1321,25 @@ document.addEventListener("click", (e) => {
     const index = parseInt(e.target.getAttribute("data-index"));
     deleteVendor(index);
   }
+  if (e.target.classList.contains("btn-edit-vendor")) {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    editVendor(index);
+  }
   if (e.target.classList.contains("btn-delete-expense")) {
     const index = parseInt(e.target.getAttribute("data-index"));
     deleteExpense(index);
   }
+  if (e.target.classList.contains("btn-edit-expense")) {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    editExpense(index);
+  }
   if (e.target.classList.contains("btn-delete-note-item")) {
     const index = parseInt(e.target.getAttribute("data-index"));
     deleteNote(index);
+  }
+  if (e.target.classList.contains("btn-edit-note-item")) {
+    const index = parseInt(e.target.getAttribute("data-index"));
+    editNote(index);
   }
 });
 
@@ -1399,12 +1427,50 @@ if (formAddVendor) {
     const notes = document.getElementById("vendor-notes").value.trim();
 
     const vendors = JSON.parse(localStorage.getItem("wedding_vendors")) || [];
-    vendors.push({ name, category, contact, status, notes });
+    
+    if (editingVendorIndex === null) {
+      vendors.push({ name, category, contact, status, notes });
+    } else {
+      vendors[editingVendorIndex] = { name, category, contact, status, notes };
+      editingVendorIndex = null;
+      if (btnSubmitVendor) btnSubmitVendor.textContent = "+ Cadastrar";
+      if (btnCancelEditVendor) btnCancelEditVendor.style.display = "none";
+    }
+
     localStorage.setItem("wedding_vendors", JSON.stringify(vendors));
     saveToGoogleSheets();
     
     formAddVendor.reset();
     renderVendors();
+  });
+}
+
+function editVendor(index) {
+  const vendors = JSON.parse(localStorage.getItem("wedding_vendors")) || [];
+  const vendor = vendors[index];
+  if (!vendor) return;
+
+  editingVendorIndex = index;
+
+  document.getElementById("vendor-name").value = vendor.name;
+  document.getElementById("vendor-category").value = vendor.category;
+  document.getElementById("vendor-contact").value = vendor.contact;
+  document.getElementById("vendor-status").value = vendor.status;
+  document.getElementById("vendor-notes").value = vendor.notes || "";
+
+  if (btnSubmitVendor) btnSubmitVendor.textContent = "Salvar";
+  if (btnCancelEditVendor) btnCancelEditVendor.style.display = "block";
+
+  const formEl = document.getElementById("form-add-vendor");
+  if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+if (btnCancelEditVendor) {
+  btnCancelEditVendor.addEventListener("click", () => {
+    editingVendorIndex = null;
+    formAddVendor.reset();
+    if (btnSubmitVendor) btnSubmitVendor.textContent = "+ Cadastrar";
+    btnCancelEditVendor.style.display = "none";
   });
 }
 
@@ -1420,12 +1486,52 @@ if (formAddExpense) {
     const method = document.getElementById("expense-method").value;
 
     const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
-    expenses.push({ name, vendor, budgeted, paid, payer, date, method });
+    
+    if (editingExpenseIndex === null) {
+      expenses.push({ name, vendor, budgeted, paid, payer, date, method });
+    } else {
+      expenses[editingExpenseIndex] = { name, vendor, budgeted, paid, payer, date, method };
+      editingExpenseIndex = null;
+      if (btnSubmitExpense) btnSubmitExpense.textContent = "+ Lançar";
+      if (btnCancelEditExpense) btnCancelEditExpense.style.display = "none";
+    }
+
     localStorage.setItem("wedding_expenses", JSON.stringify(expenses));
     saveToGoogleSheets();
 
     formAddExpense.reset();
     renderExpenses();
+  });
+}
+
+function editExpense(index) {
+  const expenses = JSON.parse(localStorage.getItem("wedding_expenses")) || [];
+  const expense = expenses[index];
+  if (!expense) return;
+
+  editingExpenseIndex = index;
+
+  document.getElementById("expense-name").value = expense.name;
+  document.getElementById("expense-vendor").value = expense.vendor;
+  document.getElementById("expense-budgeted").value = expense.budgeted;
+  document.getElementById("expense-paid").value = expense.paid;
+  document.getElementById("expense-payer").value = expense.payer;
+  document.getElementById("expense-date").value = expense.date || "";
+  document.getElementById("expense-method").value = expense.method;
+
+  if (btnSubmitExpense) btnSubmitExpense.textContent = "Salvar";
+  if (btnCancelEditExpense) btnCancelEditExpense.style.display = "block";
+
+  const formEl = document.getElementById("form-add-expense");
+  if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+if (btnCancelEditExpense) {
+  btnCancelEditExpense.addEventListener("click", () => {
+    editingExpenseIndex = null;
+    formAddExpense.reset();
+    if (btnSubmitExpense) btnSubmitExpense.textContent = "+ Lançar";
+    btnCancelEditExpense.style.display = "none";
   });
 }
 
@@ -1504,6 +1610,7 @@ function renderNotes() {
     const card = document.createElement("div");
     card.className = "admin-note-card";
     card.innerHTML = `
+      <button class="btn-edit-note btn-edit-note-item" data-index="${index}" title="Editar">✏️</button>
       <button class="btn-delete-note btn-delete-note-item" data-index="${index}" title="Excluir">&times;</button>
       <div class="admin-note-card-title">${escapeHTML(note.title)}</div>
       <span class="admin-note-card-category ${catClass}">${escapeHTML(note.category)}</span>
@@ -1538,12 +1645,48 @@ if (formAddNote) {
     if (!title || !content) return;
 
     const notes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
-    notes.push({ title, category, content });
+    
+    if (editingNoteIndex === null) {
+      notes.push({ title, category, content });
+    } else {
+      notes[editingNoteIndex] = { title, category, content };
+      editingNoteIndex = null;
+      if (btnSubmitNote) btnSubmitNote.textContent = "+ Adicionar";
+      if (btnCancelEditNote) btnCancelEditNote.style.display = "none";
+    }
+
     localStorage.setItem("wedding_notes", JSON.stringify(notes));
     saveToGoogleSheets();
 
     formAddNote.reset();
     renderNotes();
+  });
+}
+
+function editNote(index) {
+  const notes = JSON.parse(localStorage.getItem("wedding_notes")) || [];
+  const note = notes[index];
+  if (!note) return;
+
+  editingNoteIndex = index;
+
+  document.getElementById("note-title").value = note.title;
+  document.getElementById("note-category").value = note.category;
+  document.getElementById("note-content").value = note.content;
+
+  if (btnSubmitNote) btnSubmitNote.textContent = "Salvar";
+  if (btnCancelEditNote) btnCancelEditNote.style.display = "block";
+
+  const formEl = document.getElementById("form-add-note");
+  if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+}
+
+if (btnCancelEditNote) {
+  btnCancelEditNote.addEventListener("click", () => {
+    editingNoteIndex = null;
+    formAddNote.reset();
+    if (btnSubmitNote) btnSubmitNote.textContent = "+ Adicionar";
+    btnCancelEditNote.style.display = "none";
   });
 }
 

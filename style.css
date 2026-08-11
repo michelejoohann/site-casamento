@@ -1895,6 +1895,24 @@ body.lang-pt .lang-en {
   transform: scale(1.1);
 }
 
+.btn-edit-note {
+  position: absolute;
+  top: 0.8rem;
+  right: 2.2rem;
+  background: transparent;
+  border: none;
+  color: var(--gold-light);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 0 0.3rem;
+}
+
+.btn-edit-note:hover {
+  color: var(--gold);
+  transform: scale(1.1);
+}
+
 /* Photo Challenge Guest Interaction */
 .challenge-item {
   display: flex;
