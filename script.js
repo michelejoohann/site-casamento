@@ -4,7 +4,7 @@
 const GOOGLE_SHEET_URL = typeof CONFIG !== "undefined" ? CONFIG.GOOGLE_SHEET_URL : "SUA_URL_DO_GOOGLE_SCRIPT_AQUI";
 const ADMIN_PASSWORD = typeof CONFIG !== "undefined" ? CONFIG.ADMIN_PASSWORD : "beren";
 
-const CASAMENTO_DATE = new Date("2027-09-21T19:00:00").getTime(); // 21 de Setembro de 2027, 19:00h
+const CASAMENTO_DATE = new Date("2027-09-21T16:00:00").getTime(); // 21 de Setembro de 2027, 16:00h
 
 // 2. LISTA OFICIAL DE CONVIDADOS E LIMITE DE ACOMPANHANTES
 // Chave: Nome exato do convidado principal (como você enviará no convite).
