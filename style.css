@@ -1154,6 +1154,40 @@ body.lang-pt .lang-en {
   display: block;
 }
 
+/* Sub-Abas de Moeda Internacional */
+.currency-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.2rem 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.currency-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--silver);
+  padding: 0.5rem 0.2rem;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: var(--transition-smooth);
+}
+
+.currency-tab-btn:hover {
+  color: var(--gold-light);
+}
+
+.currency-tab-btn.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  text-shadow: 0 0 5px var(--gold-glow);
+}
+
 /* Detalhes de Envio Internacional */
 .intl-details-box {
   text-align: left;

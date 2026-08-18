@@ -216,6 +216,31 @@ function selectModalTab(tab) {
 tabPixBtn.addEventListener("click", () => selectModalTab("pix"));
 tabIntlBtn.addEventListener("click", () => selectModalTab("international"));
 
+// Lógica de Sub-Abas da Transferência Internacional (USD / EUR)
+const btnTabUsd = document.getElementById("tab-usd-btn");
+const btnTabEur = document.getElementById("tab-eur-btn");
+const usdDetails = document.getElementById("usd-details");
+const eurDetails = document.getElementById("eur-details");
+
+function selectCurrencyTab(currency) {
+  if (currency === "usd") {
+    btnTabUsd.classList.add("active");
+    btnTabEur.classList.remove("active");
+    usdDetails.style.display = "block";
+    eurDetails.style.display = "none";
+  } else {
+    btnTabUsd.classList.remove("active");
+    btnTabEur.classList.add("active");
+    usdDetails.style.display = "none";
+    eurDetails.style.display = "block";
+  }
+}
+
+if (btnTabUsd && btnTabEur) {
+  btnTabUsd.addEventListener("click", () => selectCurrencyTab("usd"));
+  btnTabEur.addEventListener("click", () => selectCurrencyTab("eur"));
+}
+
 // =========================================
 // 3.5. MODAL DE GUIA DE TRAJES E ABAS
 // =========================================

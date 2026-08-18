@@ -945,21 +945,67 @@
             <span class="lang-pt">Transferência Bancária (Noiva)</span>
             <span class="lang-en">Bank Account Details (Bride)</span>
           </div>
+          
+          <!-- Dados Comuns -->
           <div class="intl-row">
             <span class="intl-label">Beneficiary Name / Titular</span>
-            <span class="intl-value">Michele Joohann</span>
+            <span class="intl-value">MICHELE DAYANE JOHANN DOS SANTOS</span>
           </div>
           <div class="intl-row">
-            <span class="intl-label">Bank Name / Banco</span>
-            <span class="intl-value">Banco do Brasil S.A.</span>
+            <span class="intl-label">Destination Bank / Banco de Destino</span>
+            <span class="intl-value">BANCO C6 S.A. CAYMAN BRANCH</span>
           </div>
           <div class="intl-row">
-            <span class="intl-label">SWIFT / BIC Code</span>
-            <span class="intl-value">BRASBRBXXXX</span>
+            <span class="intl-label">Bank SWIFT / BIC Code</span>
+            <span class="intl-value">CSIXKYKY</span>
           </div>
           <div class="intl-row">
-            <span class="intl-label">IBAN / Account Number</span>
-            <span class="intl-value">BR760000100200300400500600700</span>
+            <span class="intl-label">Bank Country / País do Banco</span>
+            <span class="intl-value">Ilhas Cayman / Cayman Islands</span>
+          </div>
+
+          <!-- Seletor de Moeda (Dólar / Euro) -->
+          <div class="currency-tabs">
+            <button type="button" class="currency-tab-btn active" id="tab-usd-btn">Dólar (USD)</button>
+            <button type="button" class="currency-tab-btn" id="tab-eur-btn">Euro (EUR)</button>
+          </div>
+
+          <!-- Detalhes Específicos para USD -->
+          <div id="usd-details">
+            <div class="intl-row">
+              <span class="intl-label">Account Number / Número da Conta</span>
+              <span class="intl-value">1002464628</span>
+            </div>
+            <div class="intl-row">
+              <span class="intl-label">Intermediate Bank / Banco Intermediário</span>
+              <span class="intl-value">JP Morgan Chase Bank, NA</span>
+            </div>
+            <div class="intl-row">
+              <span class="intl-label">Intermediate SWIFT / SWIFT Intermediário</span>
+              <span class="intl-value">CHASUS33</span>
+            </div>
+          </div>
+
+          <!-- Detalhes Específicos para EUR -->
+          <div id="eur-details" style="display: none;">
+            <div class="intl-row">
+              <span class="intl-label">Account Number / Número da Conta</span>
+              <span class="intl-value">1002464639</span>
+            </div>
+            <div class="intl-row">
+              <span class="intl-label">Intermediate Bank / Banco Intermediário</span>
+              <span class="intl-value">JP Morgan SE, Frankfurt AM MAIN</span>
+            </div>
+            <div class="intl-row">
+              <span class="intl-label">Intermediate SWIFT / SWIFT Intermediário</span>
+              <span class="intl-value">CHASDEFX</span>
+            </div>
+          </div>
+
+          <!-- Nota de Finalidade -->
+          <div style="margin-top: 1.2rem; padding-top: 0.8rem; border-top: 1px dashed rgba(212, 175, 55, 0.15); font-size: 0.9rem; color: var(--silver); text-align: center; line-height: 1.4;">
+            <p><strong>Please select "gift" or "personal gift" as the purpose of the transfer.</strong></p>
+            <p style="margin-top: 0.2rem;"><em>Por favor, informe "presente/doação" como finalidade da transferência.</em></p>
           </div>
         </div>
 
