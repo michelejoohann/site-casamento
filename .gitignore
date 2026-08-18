@@ -1,0 +1,9 @@
+# Configurações sensíveis (Contém credenciais privadas)
+config.js
+
+# Sistema e IDEs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.gemini/

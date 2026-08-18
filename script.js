@@ -1,10 +1,10 @@
 // CONFIGURAÇÕES DO CASAMENTO
-// 1. Cole aqui a URL gerada pelo Google Apps Script (ex: https://script.google.com/macros/s/AKfycb.../exec)
-// Se deixar como está, o site usará o painel administrativo local (localStorage) como teste.
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwj-2IDBq7MymVzm6QqV4RJ9IyhxsFXJSln23rcC0fWiMUtUbII55oOmXkCCZ7ah9Gi/exec";
+// As configurações sensíveis (GOOGLE_SHEET_URL e ADMIN_PASSWORD) foram movidas para o arquivo privado 'config.js'.
+// Caso ele não esteja presente (por exemplo, no ambiente do GitHub Pages), usamos variáveis vazias ou padrão.
+const GOOGLE_SHEET_URL = typeof CONFIG !== "undefined" ? CONFIG.GOOGLE_SHEET_URL : "SUA_URL_DO_GOOGLE_SCRIPT_AQUI";
+const ADMIN_PASSWORD = typeof CONFIG !== "undefined" ? CONFIG.ADMIN_PASSWORD : "beren";
 
 const CASAMENTO_DATE = new Date("2027-09-21T19:00:00").getTime(); // 21 de Setembro de 2027, 19:00h
-const ADMIN_PASSWORD = "beren"; // Senha para o painel de testes local
 
 // 2. LISTA OFICIAL DE CONVIDADOS E LIMITE DE ACOMPANHANTES
 // Chave: Nome exato do convidado principal (como você enviará no convite).
