@@ -331,6 +331,26 @@ if (closeLightboxModal) {
   });
 }
 
+// Atualiza a imagem do QR code com o arquivo correspondente para a cota selecionada
+function updatePixQrCode(priceStr, giftTitlePt) {
+  // Mapeia títulos em português para os nomes dos arquivos locais de imagem salvos em images/
+  const imgMap = {
+    "Jantar Romântico em Valfenda": "images/qr_jantar.png",
+    "Passagem de Águia (Lua de Mel)": "images/qr_aguia.png",
+    "Um tijolo para nossa toca de Hobbit": "images/qr_tijolo.png",
+    "Banquete no Pônei Saltitante": "images/qr_banquete.png",
+    "Equipamentos de Cozinha de Lórien": "images/qr_cozinha.png",
+    "Presente de Livre Escolha": "images/qr_cozinha.png" // Usa o QR Code oficial de valor livre gerado pelo banco
+  };
+
+  const imagePath = imgMap[giftTitlePt] || "images/qr_cozinha.png";
+
+  const pixQrImg = document.getElementById("pix-qr-img");
+  if (pixQrImg) {
+    pixQrImg.src = imagePath;
+  }
+}
+
 // Abrir modal de presente
 document.querySelectorAll(".btn-gift").forEach(button => {
   button.addEventListener("click", () => {
@@ -338,6 +358,7 @@ document.querySelectorAll(".btn-gift").forEach(button => {
       ? button.getAttribute("data-title-en") 
       : button.getAttribute("data-title-pt");
     const giftPrice = button.getAttribute("data-price");
+    const giftTitlePt = button.getAttribute("data-title-pt");
 
     modalGiftTitle.textContent = giftTitle;
     
@@ -346,6 +367,9 @@ document.querySelectorAll(".btn-gift").forEach(button => {
     } else {
       modalGiftPrice.textContent = `R$ ${giftPrice}`;
     }
+
+    // Gera o QR Code dinamicamente para o valor selecionado
+    updatePixQrCode(giftPrice, giftTitlePt);
 
     selectModalTab("pix");
     btnCopyPix.textContent = translations[currentLanguage].copiar;
